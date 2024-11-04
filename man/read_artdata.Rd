@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_artdata.R
 \name{read_artdata}
 \alias{read_artdata}
-\title{Lee y combina múltiples archivos de datos, manteniendo el origen de cada archivo}
+\title{Reads and combines multiple data files, retaining the source of each file}
 \usage{
 read_artdata(archivos, carpeta, sep = ";", header = TRUE)
 }
@@ -20,13 +20,17 @@ Un data frame con todos los archivos combinados, incluyendo una columna "archivo
 el archivo de origen para cada fila.
 }
 \description{
-Esta función lee múltiples archivos de texto ubicados en una carpeta específica, agrega una columna
-indicando el archivo de origen y luego los combina en un único data frame.
+This function reads multiple text files located in a specific folder, adds a column
+indicating the source file, and then combines them into a single data frame.
 }
 \examples{
 archivos <- c("Draga_01.txt", "Draga_02.txt", "Draga_03.txt")
 carpeta <- "ruta/a/tu/carpeta"
+# Verificar que todos los archivos existen antes de ejecutar la función
 if (all(file.exists(file.path(carpeta, archivos)))) {
   datos_combinados <- read_artdata(archivos, carpeta, sep = ",")
+  print(datos_combinados)
+} else {
+  warning("Uno o más archivos no se encuentran en la carpeta especificada.")
 }
 }

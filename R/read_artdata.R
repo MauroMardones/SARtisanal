@@ -1,7 +1,7 @@
-#' Lee y combina múltiples archivos de datos, manteniendo el origen de cada archivo
+#' Reads and combines multiple data files, retaining the source of each file
 #'
-#' Esta función lee múltiples archivos de texto ubicados en una carpeta específica, agrega una columna
-#' indicando el archivo de origen y luego los combina en un único data frame.
+#' This function reads multiple text files located in a specific folder, adds a column
+#' indicating the source file, and then combines them into a single data frame.
 #'
 #' @param archivos Un vector de nombres de archivos (por ejemplo, "archivo1.txt", "archivo2.txt", ...).
 #' @param carpeta La ruta de la carpeta donde se encuentran los archivos.
@@ -16,25 +16,21 @@
 #' @examples
 #' archivos <- c("Draga_01.txt", "Draga_02.txt", "Draga_03.txt")
 #' carpeta <- "ruta/a/tu/carpeta"
+#' # Verificar que todos los archivos existen antes de ejecutar la función
 #' if (all(file.exists(file.path(carpeta, archivos)))) {
 #'   datos_combinados <- read_artdata(archivos, carpeta, sep = ",")
+#'   print(datos_combinados)
+#' } else {
+#'   warning("Uno o más archivos no se encuentran en la carpeta especificada.")
 #' }
 read_artdata <- function(archivos, carpeta, sep = ";", header = TRUE) {
-  # Lista para almacenar los datos de cada archivo
-  lista_datos <- list()
-  # Ciclo para leer cada archivo y guardarlo en la lista con una columna adicional "archivo_origen"
+  datos_combinados <- NULL
   for (archivo in archivos) {
-    # Construir la ruta completa del archivo
     ruta <- file.path(carpeta, archivo)
-    # Leer el archivo
     datos <- read.table(ruta, sep = sep, header = header)
-    # Agregar columna "archivo_origen" con el nombre del archivo
     datos$archivo_origen <- archivo
-    # Agregar los datos a la lista
-    lista_datos[[archivo]] <- datos
+    datos_combinados <- rbind(datos_combinados, datos)
   }
-  # Combinar todos los data frames en uno solo
-  datos_combinados <- do.call(rbind, lista_datos)
   return(datos_combinados)
 }
 

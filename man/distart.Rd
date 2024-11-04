@@ -2,31 +2,33 @@
 % Please edit documentation in R/distart.R
 \name{distart}
 \alias{distart}
-\title{Calcula la distancia euclideana en metros con información de los cuatro registros de latitud peor con diferentes tiempos}
+\title{Calculates the Euclidean distance in meters using the Haversine formula}
 \usage{
 distart(lat1, lon1, lat2, lon2)
 }
 \arguments{
-\item{lat1}{point 1 Latitud}
+\item{lat1}{Latitude of point 1 (in degrees).}
 
-\item{lon1}{point 1 Longitud}
+\item{lon1}{Longitude of point 1 (in degrees).}
 
-\item{lat2}{point 2 Latitud}
+\item{lat2}{Latitude of point 2 (in degrees).}
 
-\item{lon2}{point 2 Longitud}
+\item{lon2}{Longitude of point 2 (in degrees).}
 }
 \value{
-distancia calculada
+The calculated distance in meters.
 }
 \description{
-Calcula la distancia euclideana en metros con información de los cuatro registros de latitud peor con diferentes tiempos
+This function computes the distance between two geographical points specified by
+their latitude and longitude coordinates using the Haversine formula, which accounts
+for the curvature of the Earth.
 }
 \examples{
-# Ejemplo de uso:
-# Distancia entre dos puntos: (lat1, lon1) y (lat2, lon2)
+# Example usage:
+# Distance between two points: (lat1, lon1) and (lat2, lon2)
 distancia <- distart(
-  40.7128, -74.0060,
-  34.0522, -118.2437
-)  # Distancia entre Nueva York y Los Ángeles
-print(distancia)
+  40.7128, -74.0060,  # New York coordinates
+  34.0522, -118.2437  # Los Angeles coordinates
+)
+print(distancia)  # Distance between New York and Los Angeles
 }
