@@ -46,6 +46,7 @@ library(SARtisanal)
 ```
 
 
+
 ```{r read}
 archivos <- c("Draga_01.txt", 
               "Draga_02.txt", 

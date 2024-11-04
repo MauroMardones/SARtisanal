@@ -45,7 +45,9 @@ library(SARtisanal)
 ```
 
 ``` r
-archivos <- c("Draga_01.txt", "Draga_02.txt", "Draga_03.txt")
+archivos <- c("Draga_01.txt", 
+              "Draga_02.txt", 
+              "Draga_03.txt")
 carpeta <- "your/path"
 
 # Read and join all files
