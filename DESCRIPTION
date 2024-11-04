@@ -5,7 +5,7 @@ Authors@R:
     person("Mauricio", "Mardones", , "mauricio.mardones@ieo.csic.es", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-1077-1880"))
 Description: The "Sartisanal" package is designed to calculate the Swept Area Ratio (SAR) for artisanal fishing fleets that have information on green boxes related to monitoring their fishing activities. It includes functions to compute the SAR as an indicator of fishing pressure, allowing users to evaluate the sustainability of fishing practices in a given temporal and spatial context. The package also offers tools for incorporating and analyzing data from green boxes, facilitating a better understanding of fishing activities and their impact on marine ecosystems. Additionally, it features custom plotting functions to visualize SAR results, providing clear insights into fishing pressure over time and across different geographical areas. The package is designed to be accessible for both novice and experienced R users, enabling effective data analysis and visualization.
-License: Apache License (>= 2)
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
