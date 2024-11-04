@@ -61,16 +61,10 @@ if (all(file.exists(file.path(carpeta, archivos)))) {
 
 Calculating distances;
 
-1.  Create the toy data frame
+1.  Load data example
 
 ``` r
-
-datos <- data.frame(
-  lat1 = c(-33.456, -33.458, -33.460, -33.465, -33.470, -33.475),
-  lon1 = c(-70.650, -70.655, -70.660, -70.670, -70.675, -70.680),
-  lat2 = c(-33.458, -33.460, -33.465, -33.470, -33.475, -33.480),
-  lon2 = c(-70.655, -70.660, -70.670, -70.675, -70.680, -70.685)
-)
+data("artdata")
 ```
 
 2.  Call the distar function using mapply
