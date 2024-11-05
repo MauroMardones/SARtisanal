@@ -1,7 +1,7 @@
 ---
 title: "User Guide **SARtisanal** package to calculate of Swept Area Ratio (SAR) in artisanal fisheries context"
 subtitle: "Proyecto IN-BENTO (Desarrollo de bioindicadores para el seguimiento de los ecosistemas intermareal y submareal sometidos a explotación marisquera en el litoral de Huelva) (Consejería de Universidad, Investigación e Innovación de la Junta de Andalucía y el Gobierno de España. Financiado por la Unión Europea-NextGeneration EU. MRR)"
-author: "Mardones. M., Delgado, M., González, José Manuel"
+author: "Mardones. M., Delgado, M.,..."
 date:  "`r format(Sys.time(), '%d %B, %Y')`"
 #bibliography: INBENTO.bib
 #csl: apa.csl
