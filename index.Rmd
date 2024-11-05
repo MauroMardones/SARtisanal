@@ -1,0 +1,151 @@
+---
+title: "User Guide **SARtisanal** package to calculate of Swept Area Ratio (SAR) in artisanal fisheries context"
+subtitle: "Proyecto IN-BENTO (Desarrollo de bioindicadores para el seguimiento de los ecosistemas intermareal y submareal sometidos a explotación marisquera en el litoral de Huelva) (Consejería de Universidad, Investigación e Innovación de la Junta de Andalucía y el Gobierno de España. Financiado por la Unión Europea-NextGeneration EU. MRR)"
+author: "Mardones. M., Delgado, M., González, José Manuel"
+date:  "`r format(Sys.time(), '%d %B, %Y')`"
+#bibliography: INBENTO.bib
+#csl: apa.csl
+link-citations: yes
+linkcolor: blue
+output:
+  html_document:
+    keep_md: true
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    theme: cosmo
+    fontsize: 0.9em
+    linestretch: 1.7
+    html-math-method: katex
+    self-contained: true
+    code-tools: true
+# title: "![](IEO-logo2.png){width=10cm}"
+# output:
+#   bookdown::pdf_document2:
+#     includes:
+#       before_body: titulo.sty
+#     keep_tex: yes
+#     number_sections: no
+#     toc: true
+#     toc_depth: 3
+# bibliography: INBENTO.bib
+# csl: apa.csl
+# link-citations: yes
+# linkcolor: blue
+# indent: no
+# header-includes:
+# - \usepackage{fancyhdr}
+# - \pagestyle{fancy}
+# - \fancyhf{}
+# - \lfoot[\thepage]{}
+# - \rfoot[]{\thepage}
+# - \fontsize{12}{22}
+# - \selectfont
+---
+
+\newpage
+
+```{r setup1, echo =FALSE}
+rm(list = ls())
+knitr::opts_chunk$set(message = FALSE,
+                      eval = TRUE,
+                      warning = FALSE,
+                      echo=TRUE,
+                      fig.align = 'center',
+                      dev = 'jpeg',
+                      dpi = 300, 
+                      fig.align='center')
+#XQuartz is a mess, put this in your onload to default to cairo instead
+options(bitmapType = "cairo") 
+# (https://github.com/tidyverse/ggplot2/issues/2655)
+# Lo mapas se hacen mas rapido
+```
+
+```{r libs, message=FALSE}
+library(SARtisanal)
+library(tidyverse)
+library(ggridges)
+library(here)
+library(lubridate)
+library(readr)
+library(ggthemes)
+library(kableExtra)
+library(gtsummary)
+library(egg)
+library(ggthemes)
+library(sf)
+```
+
+
+# Initial steps
+
+This is a basic example which shows you how to solve a common problem to read and calculate distance with this kind of data
+
+```{r example}
+library(SARtisanal)
+```
+
+Example to load owd data;
+
+```{r read}
+archivos <- c("Draga_01.txt", 
+              "Draga_02.txt", 
+              "Draga_03.txt")
+carpeta <- "your/path"
+
+# Read and join all files
+if (all(file.exists(file.path(carpeta, archivos)))) {
+  datos_combinados <- read_artdata(archivos, carpeta, sep = ",")
+  print(datos_combinados)
+} else {
+  warning("One or more files are not found in the specified folder.")
+}
+```
+
+Calculating distances;
+
+1. Load data example
+
+```{r}
+data("artdata")
+```
+
+
+2. Remove duplicate data with `remo_dup`;
+
+```{r}
+head(artdata)
+artdata2 <- remo_dup(artdata)
+dim(artdata2)
+```
+
+3. Call the `distar` function using `mapply`;
+
+```{r}
+# Calcular distancias entre filas consecutivas
+distancias <- mapply(distart,
+   artdata2$N_LATITUD,
+   artdata2$N_LONGITUD,
+   lag(artdata2$N_LATITUD),
+   lag(artdata2$N_LONGITUD)
+   ) 
+  
+artdata2 <- artdata2 %>%
+  mutate(distancias = distancias) %>% 
+  mutate_if(is.numeric, round, 3)
+```
+
+
+Visualizing data with `skim`;
+
+```{r}
+skimr::skim(artdata2)
+```
+
+# Calculate SAR
+
+
+# Maps
+
+# References
