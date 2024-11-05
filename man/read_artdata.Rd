@@ -4,14 +4,15 @@
 \alias{read_artdata}
 \title{Reads and combines multiple data files, retaining the source of each file}
 \usage{
-read_artdata(archivos, carpeta, sep = ";", header = TRUE)
+read_artdata(archivos, carpeta, sep = ",", header = TRUE)
 }
 \arguments{
 \item{archivos}{Un vector de nombres de archivos (por ejemplo, "archivo1.txt", "archivo2.txt", ...).}
 
 \item{carpeta}{La ruta de la carpeta donde se encuentran los archivos.}
 
-\item{sep}{El separador utilizado en los archivos de texto (por defecto es ";").}
+\item{sep}{El separador de los archivos (por ejemplo, \code{","} para coma, \code{";"} para punto y coma, o \code{" "} para espacio).
+Este separador se aplica a todos los archivos.}
 
 \item{header}{Lógico, TRUE si los archivos tienen encabezado.}
 }

@@ -5,7 +5,8 @@
 #'
 #' @param archivos Un vector de nombres de archivos (por ejemplo, "archivo1.txt", "archivo2.txt", ...).
 #' @param carpeta La ruta de la carpeta donde se encuentran los archivos.
-#' @param sep El separador utilizado en los archivos de texto (por defecto es ";").
+#' @param sep El separador de los archivos (por ejemplo, `","` para coma, `";"` para punto y coma, o `" "` para espacio).
+#'            Este separador se aplica a todos los archivos.
 #' @param header Lógico, TRUE si los archivos tienen encabezado.
 #'
 #' @return Un data frame con todos los archivos combinados, incluyendo una columna "archivo_origen" que indica
@@ -23,14 +24,15 @@
 #' } else {
 #'   warning("Uno o más archivos no se encuentran en la carpeta especificada.")
 #' }
-read_artdata <- function(archivos, carpeta, sep = ";", header = TRUE) {
-  datos_combinados <- NULL
+read_artdata <- function(archivos, carpeta, sep = ",", header = TRUE) {
+  lista_datos <- list()
   for (archivo in archivos) {
     ruta <- file.path(carpeta, archivo)
     datos <- read.table(ruta, sep = sep, header = header)
     datos$archivo_origen <- archivo
-    datos_combinados <- rbind(datos_combinados, datos)
+    lista_datos[[archivo]] <- datos
   }
+  datos_combinados <- do.call(rbind, lista_datos)
   return(datos_combinados)
 }
 
