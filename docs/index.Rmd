@@ -93,7 +93,7 @@ library(egg)
 library(ggthemes)
 library(sf)
 ```
-Example to load owd data;
+Example to load own data;
 
 ```{r read}
 archivos <- c("Draga_01.txt", 

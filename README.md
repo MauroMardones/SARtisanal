@@ -34,3 +34,7 @@ or
 library(devtools)
 install_github("MauroMardones/SARtisanal")
 ```
+
+User guide to use and apply `SARtisanal`packages and functions colud be
+fupnd in this repo; [SARtisanal
+package](https://mauromardones.github.io/SARtisanal/)
