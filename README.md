@@ -20,8 +20,9 @@ environmental impact through the calculation of SAR.
 
 ## Installation
 
-You can install the development version of SARtisanal from
-[GitHub](https://github.com/) with:
+To install the `SARtisanal` package, ensure you have R and RStudio
+installed. You can install the package from
+[GitHub](https://github.com/) using the following command:
 
 ``` r
 # install.packages("pak")
@@ -35,6 +36,8 @@ library(devtools)
 install_github("MauroMardones/SARtisanal")
 ```
 
-User guide to use and apply `SARtisanal`packages and functions colud be
-fupnd in this repo; [SARtisanal
+## User Guide `SARtisanal`
+
+User guide to use and apply `SARtisanal`packages and functions could be
+found in this repo; [SARtisanal
 package](https://mauromardones.github.io/SARtisanal/)
