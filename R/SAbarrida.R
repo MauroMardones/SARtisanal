@@ -1,17 +1,17 @@
-#' Calcula el área barrida (SA) en función de la distancia y el ancho del arte de pesca.
+#' Calculates the Swept Area (SA) based on distance and the width of the fishing gear.
 #'
-#' @param distancia Un vector que representa las distancias en metros.
-#' @param ancho Un vector que representa el ancho del arte de pesca en metros.
-#'              Debe ser del mismo tamaño que 'distancia' o un solo valor.
+#' @param distancia A vector representing distances in meters.
+#' @param ancho A vector representing the width of the fishing gear in meters.
+#'              It must be the same size as 'distancia' or a single value.
 #'
-#' @return Un vector con el área barrida calculada.
+#' @return A vector with the calculated swept area.
 #' @export
 #'
 #' @examples
-#' # Cálculo del área barrida con un ancho de 2.5 metros
-#' distancias <- c(100, 200, 300)
-#' area_barrida <- SAbarrida(distancias, ancho = 2.5)
-#' area_barrida_pre <- SAbarrida(distancias, ancho = 2.5)
+#' # Calculate the swept area with a width of 2.5 meters
+#' distances <- c(100, 200, 300)
+#' swept_area <- SAbarrida(distances, ancho = 2.5)
+#' swept_area_pre <- SAbarrida(distances, ancho = 2.5)
 SAbarrida <- function(distancia, ancho) {
     if (length(ancho) == 1) {
     ancho <- rep(ancho, length(distancia))  # Expandir a largo de distancia

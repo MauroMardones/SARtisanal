@@ -2,23 +2,23 @@
 % Please edit documentation in R/remo_dup.R
 \name{remo_dup}
 \alias{remo_dup}
-\title{Elimina duplicados de un data frame}
+\title{Remove duplicates from a data frame}
 \usage{
 remo_dup(datos, mantener_ultima = FALSE)
 }
 \arguments{
-\item{datos}{Un data frame en el que se buscarán duplicados (por ejemplo, \code{artdata}).}
+\item{datos}{A data frame in which duplicates will be searched (for example, \code{artdata}).}
 
-\item{mantener_ultima}{Lógico, \code{TRUE} para mantener la última ocurrencia de cada fila duplicada.
-Por defecto es \code{FALSE}, lo que mantiene la primera ocurrencia.}
+\item{mantener_ultima}{Logical, \code{TRUE} to keep the last occurrence of each duplicated row.
+Defaults to \code{FALSE}, which keeps the first occurrence.}
 }
 \value{
-Un data frame sin filas duplicadas.
+A data frame without duplicate rows.
 }
 \description{
-Esta función identifica y elimina filas duplicadas en un data frame que comunente aparecen en este tipo de registros. Se puede optar por eliminar
-los duplicados manteniendo solo la última ocurrencia de cada fila duplicada.
+This function identifies and removes duplicate rows in a data frame that commonly occur in this type of records.
+You can choose to remove duplicates while keeping only the last occurrence of each duplicated row.
 }
 \examples{
-artdata_sin_duplicados <- remo_dup(artdata, mantener_ultima = TRUE)
+artdata_without_duplicates <- remo_dup(artdata, mantener_ultima = TRUE)
 }

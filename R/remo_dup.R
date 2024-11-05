@@ -1,17 +1,17 @@
-#' Elimina duplicados de un data frame
+#' Remove duplicates from a data frame
 #'
-#' Esta función identifica y elimina filas duplicadas en un data frame que comunente aparecen en este tipo de registros. Se puede optar por eliminar
-#' los duplicados manteniendo solo la última ocurrencia de cada fila duplicada.
+#' This function identifies and removes duplicate rows in a data frame that commonly occur in this type of records.
+#' You can choose to remove duplicates while keeping only the last occurrence of each duplicated row.
 #'
-#' @param datos Un data frame en el que se buscarán duplicados (por ejemplo, `artdata`).
-#' @param mantener_ultima Lógico, `TRUE` para mantener la última ocurrencia de cada fila duplicada.
-#'                        Por defecto es `FALSE`, lo que mantiene la primera ocurrencia.
+#' @param datos A data frame in which duplicates will be searched (for example, `artdata`).
+#' @param mantener_ultima Logical, `TRUE` to keep the last occurrence of each duplicated row.
+#'                        Defaults to `FALSE`, which keeps the first occurrence.
 #'
-#' @return Un data frame sin filas duplicadas.
+#' @return A data frame without duplicate rows.
 #' @export
 #'
 #' @examples
-#' artdata_sin_duplicados <- remo_dup(artdata, mantener_ultima = TRUE)
+#' artdata_without_duplicates <- remo_dup(artdata, mantener_ultima = TRUE)
 remo_dup <- function(datos, mantener_ultima = FALSE) {
   # Identificar filas duplicadas
   filas_duplicadas <- duplicated(datos, fromLast = mantener_ultima)

@@ -2,25 +2,25 @@
 % Please edit documentation in R/SAbarrida.R
 \name{SAbarrida}
 \alias{SAbarrida}
-\title{Calcula el área barrida (SA) en función de la distancia y el ancho del arte de pesca.}
+\title{Calculates the Swept Area (SA) based on distance and the width of the fishing gear.}
 \usage{
 SAbarrida(distancia, ancho)
 }
 \arguments{
-\item{distancia}{Un vector que representa las distancias en metros.}
+\item{distancia}{A vector representing distances in meters.}
 
-\item{ancho}{Un vector que representa el ancho del arte de pesca en metros.
-Debe ser del mismo tamaño que 'distancia' o un solo valor.}
+\item{ancho}{A vector representing the width of the fishing gear in meters.
+It must be the same size as 'distancia' or a single value.}
 }
 \value{
-Un vector con el área barrida calculada.
+A vector with the calculated swept area.
 }
 \description{
-Calcula el área barrida (SA) en función de la distancia y el ancho del arte de pesca.
+Calculates the Swept Area (SA) based on distance and the width of the fishing gear.
 }
 \examples{
-# Cálculo del área barrida con un ancho de 2.5 metros
-distancias <- c(100, 200, 300)
-area_barrida <- SAbarrida(distancias, ancho = 2.5)
-area_barrida_pre <- SAbarrida(distancias, ancho = 2.5)
+# Calculate the swept area with a width of 2.5 meters
+distances <- c(100, 200, 300)
+swept_area <- SAbarrida(distances, ancho = 2.5)
+swept_area_pre <- SAbarrida(distances, ancho = 2.5)
 }

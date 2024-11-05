@@ -161,6 +161,75 @@ artdataSA <- artdata2 %>%
     SA2 = SAbarrida(distancia, ancho = 3)  # Cálculo del SA con otro ancho
   )
 ```
+```{r}
+# Filtrar solo las columnas numéricas y eliminar NAs
+numeric_data <- artdataSA %>%
+  select_if(is.numeric) %>%
+  select_if(~ var(.) != 0) %>%  # Excluir columnas con varianza cero
+  na.omit()  # Eliminar filas con NAs
+
+# Seleccionar solo las columnas específicas y eliminar filas con NAs
+selected_data <- artdataSA %>%
+  select(N_LATITUD, N_LONGITUD, N_VELOCIDAD, N_SATELITES , N_SATELITES , distancia, SA, SA2) %>%
+  na.omit()  # Eliminar filas con NAs
+
+# Calcular la matriz de correlación
+cor_matrix <- cor(selected_data)
+
+# Crear el heatmap de la matriz de correlación
+library(pheatmap)
+pheatmap(cor_matrix, 
+         display_numbers = TRUE, 
+         number_format = "%.2f", 
+         main = "Correlation Heatmap")
+
+
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(cluster)
+
+# Filtrar datos donde la distancia sea menor a 5000 metros y seleccionar columnas específicas
+filtered_data <- artdataSA %>%
+  filter(distancia < 5000) %>%
+  select(N_LATITUD, N_LONGITUD, N_VELOCIDAD, N_SATELITES, distancia, SA, SA2) %>%
+  na.omit()  # Eliminar filas con NAs
+
+# Escalar los datos para normalizar las unidades de las variables
+scaled_data <- scale(filtered_data)
+
+# Calcular la matriz de distancias
+dist_matrix <- dist(scaled_data)
+
+# Realizar el clustering jerárquico usando el método de enlace completo
+hclust_model <- hclust(dist_matrix, method = "complete")
+
+# Crear el dendrograma
+plot(hclust_model, 
+     main = "Dendrograma de Clustering Jerárquico", 
+     xlab = "Observaciones", 
+     ylab = "Distancia")
+
+# Crear clusters en base al dendrograma, eligiendo el número de clusters deseado
+num_clusters <- 4  # Ajusta este número según tus necesidades
+cluster_groups <- cutree(hclust_model, k = num_clusters)
+
+# Agregar los resultados de clustering al conjunto de datos original
+filtered_data <- filtered_data %>%
+  mutate(cluster = factor(cluster_groups))
+
+# Visualización de las primeras dos dimensiones con los clusters
+ggplot(filtered_data, aes(y = N_LATITUD, x = SA)) +
+  geom_point(size = 2) +
+  labs(title = "Clustering Jerárquico en Datos de Distancia Menor a 5000m",
+       x = "Latitud",
+       y = "Longitud") +
+  theme_minimal()
+
+```
+
 
 
 # Maps
