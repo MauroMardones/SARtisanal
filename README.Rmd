@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# SARtisanal
+# SARtisanal package
 
 <!-- badges: start -->
 <!-- badges: end -->

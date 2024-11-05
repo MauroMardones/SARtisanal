@@ -65,7 +65,7 @@ library(sf)
 ```
 
 
-# INITAL STEPS
+# Initial steps
 
 This is a basic example which shows you how to solve a common problem to read and calculate distance with this kind of data
 
@@ -223,9 +223,9 @@ Table: Data summary
 |FK_MODAL      |         0|             1|       1.79|     1.51|       0.00|       0.00|       3.00|       3.00|       4.00|▆▁▁▇▁ |
 |distancias    |         1|             1|    1127.35|  4130.41|       0.00|     101.82|     240.32|     608.74|  105605.95|▇▁▁▁▁ |
 
-# CALCULATE SAR
+# Calculate SAR
 
 
-# MAPS
+# Maps
 
-# REFERENCES
+# References
