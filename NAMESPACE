@@ -2,4 +2,5 @@
 
 export(distart)
 export(read_artdata)
+export(remo_dup)
 importFrom(utils,read.table)
