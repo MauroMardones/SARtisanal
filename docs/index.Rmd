@@ -62,8 +62,25 @@ options(bitmapType = "cairo")
 # Lo mapas se hacen mas rapido
 ```
 
-```{r libs, message=FALSE}
+
+
+# Initial steps
+
+Load `SARtisanal` library from github pages using `devtools`
+
+```{r eval=FALSE}
+library(devtools)
+install_github("MauroMardones/SARtisanal")
+```
+
+
+```{r}
 library(SARtisanal)
+```
+
+and load another important packages;
+
+```{r libs, message=FALSE}
 library(tidyverse)
 library(ggridges)
 library(here)
@@ -76,16 +93,6 @@ library(egg)
 library(ggthemes)
 library(sf)
 ```
-
-
-# Initial steps
-
-This is a basic example which shows you how to solve a common problem to read and calculate distance with this kind of data
-
-```{r example}
-library(SARtisanal)
-```
-
 Example to load owd data;
 
 ```{r read}
@@ -124,7 +131,7 @@ dim(artdata2)
 
 ```{r}
 # Calcular distancias entre filas consecutivas
-distancias <- mapply(distart,
+distancia <- mapply(distart,
    artdata2$N_LATITUD,
    artdata2$N_LONGITUD,
    lag(artdata2$N_LATITUD),
@@ -132,7 +139,7 @@ distancias <- mapply(distart,
    ) 
   
 artdata2 <- artdata2 %>%
-  mutate(distancias = distancias) %>% 
+  mutate(distancia = distancia) %>% 
   mutate_if(is.numeric, round, 3)
 ```
 
@@ -144,6 +151,16 @@ skimr::skim(artdata2)
 ```
 
 # Calculate SAR
+
+First Swept Area using `SAbarrida`;
+
+```{r eval=FALSE}
+artdataSA <- artdata2 %>% 
+  mutate(
+    SA = SAbarrida(distancia, ancho = 2.5),  # Cálculo del SA con ancho 2.5 metros
+    SA2 = SAbarrida(distancia, ancho = 3)  # Cálculo del SA con otro ancho
+  )
+```
 
 
 # Maps

@@ -49,8 +49,27 @@ output:
 
 
 
+
+# Initial steps
+
+Load `SARtisanal` library from github pages using `devtools`
+
+
+``` r
+library(devtools)
+install_github("MauroMardones/SARtisanal")
+```
+
+
+
 ``` r
 library(SARtisanal)
+```
+
+and load another important packages;
+
+
+``` r
 library(tidyverse)
 library(ggridges)
 library(here)
@@ -63,17 +82,6 @@ library(egg)
 library(ggthemes)
 library(sf)
 ```
-
-
-# Initial steps
-
-This is a basic example which shows you how to solve a common problem to read and calculate distance with this kind of data
-
-
-``` r
-library(SARtisanal)
-```
-
 Example to load owd data;
 
 
@@ -154,7 +162,7 @@ dim(artdata2)
 
 ``` r
 # Calcular distancias entre filas consecutivas
-distancias <- mapply(distart,
+distancia <- mapply(distart,
    artdata2$N_LATITUD,
    artdata2$N_LONGITUD,
    lag(artdata2$N_LATITUD),
@@ -162,7 +170,7 @@ distancias <- mapply(distart,
    ) 
   
 artdata2 <- artdata2 %>%
-  mutate(distancias = distancias) %>% 
+  mutate(distancia = distancia) %>% 
   mutate_if(is.numeric, round, 3)
 ```
 
@@ -221,9 +229,20 @@ Table: Data summary
 |FK_ACTIVI     |         0|             1|       3.39|     0.89|       1.00|       3.00|       4.00|       4.00|       4.00|▁▁▁▅▇ |
 |FK_ESTADO     |         0|             1|       4.83|     0.67|       1.00|       5.00|       5.00|       5.00|       5.00|▁▁▁▁▇ |
 |FK_MODAL      |         0|             1|       1.79|     1.51|       0.00|       0.00|       3.00|       3.00|       4.00|▆▁▁▇▁ |
-|distancias    |         1|             1|    1127.35|  4130.41|       0.00|     101.82|     240.32|     608.74|  105605.95|▇▁▁▁▁ |
+|distancia     |         1|             1|    1127.35|  4130.41|       0.00|     101.82|     240.32|     608.74|  105605.95|▇▁▁▁▁ |
 
 # Calculate SAR
+
+First Swept Area using `SAbarrida`;
+
+
+``` r
+artdataSA <- artdata2 %>% 
+  mutate(
+    SA = SAbarrida(distancia, ancho = 2.5),  # Cálculo del SA con ancho 2.5 metros
+    SA2 = SAbarrida(distancia, ancho = 3)  # Cálculo del SA con otro ancho
+  )
+```
 
 
 # Maps

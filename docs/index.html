@@ -1518,8 +1518,15 @@ MRR)</h3>
 
 
 <div style="page-break-after: always;"></div>
-<pre class="r"><code>library(SARtisanal)
-library(tidyverse)
+<div id="initial-steps" class="section level1">
+<h1>Initial steps</h1>
+<p>Load <code>SARtisanal</code> library from github pages using
+<code>devtools</code></p>
+<pre class="r"><code>library(devtools)
+install_github(&quot;MauroMardones/SARtisanal&quot;)</code></pre>
+<pre class="r"><code>library(SARtisanal)</code></pre>
+<p>and load another important packages;</p>
+<pre class="r"><code>library(tidyverse)
 library(ggridges)
 library(here)
 library(lubridate)
@@ -1530,11 +1537,6 @@ library(gtsummary)
 library(egg)
 library(ggthemes)
 library(sf)</code></pre>
-<div id="initial-steps" class="section level1">
-<h1>Initial steps</h1>
-<p>This is a basic example which shows you how to solve a common problem
-to read and calculate distance with this kind of data</p>
-<pre class="r"><code>library(SARtisanal)</code></pre>
 <p>Example to load owd data;</p>
 <pre class="r"><code>archivos &lt;- c(&quot;Draga_01.txt&quot;, 
               &quot;Draga_02.txt&quot;, 
@@ -1593,7 +1595,7 @@ dim(artdata2)</code></pre>
 <code>mapply</code>;</li>
 </ol>
 <pre class="r"><code># Calcular distancias entre filas consecutivas
-distancias &lt;- mapply(distart,
+distancia &lt;- mapply(distart,
    artdata2$N_LATITUD,
    artdata2$N_LONGITUD,
    lag(artdata2$N_LATITUD),
@@ -1601,7 +1603,7 @@ distancias &lt;- mapply(distart,
    ) 
   
 artdata2 &lt;- artdata2 %&gt;%
-  mutate(distancias = distancias) %&gt;% 
+  mutate(distancia = distancia) %&gt;% 
   mutate_if(is.numeric, round, 3)</code></pre>
 <p>Visualizing data with <code>skim</code>;</p>
 <pre class="r"><code>skimr::skim(artdata2)</code></pre>
@@ -1960,7 +1962,7 @@ artdata2 &lt;- artdata2 %&gt;%
 <td align="left">▆▁▁▇▁</td>
 </tr>
 <tr class="even">
-<td align="left">distancias</td>
+<td align="left">distancia</td>
 <td align="right">1</td>
 <td align="right">1</td>
 <td align="right">1127.35</td>
@@ -1977,6 +1979,12 @@ artdata2 &lt;- artdata2 %&gt;%
 </div>
 <div id="calculate-sar" class="section level1">
 <h1>Calculate SAR</h1>
+<p>First Swept Area using <code>SAbarrida</code>;</p>
+<pre class="r"><code>artdataSA &lt;- artdata2 %&gt;% 
+  mutate(
+    SA = SAbarrida(distancia, ancho = 2.5),  # Cálculo del SA con ancho 2.5 metros
+    SA2 = SAbarrida(distancia, ancho = 3)  # Cálculo del SA con otro ancho
+  )</code></pre>
 </div>
 <div id="maps" class="section level1">
 <h1>Maps</h1>
