@@ -1,7 +1,7 @@
 ---
 title: "User Guide **SARtisanal** package"
 subtitle: "Methodology used to calculate of Swept Area Ratio (SAR) in artisanal fisheries context"
-author: "Mardones. M., Delgado, M., Magro, A..."
+author: "Mardones. M., Delgado, M., ..."
 date:  "06 November, 2024"
 bibliography: SARtisanal.bib
 csl: apa.csl
@@ -28,6 +28,21 @@ output:
 
 
 
+# Main functions 
+
+Here is a brief overview of each function in the `SARtisanal` package [@Mardones2024]:
+
+- `read_artdata()`: Reads and merges multiple files into a single data frame, streamlining data integration from multiple sources.
+
+- `remo_dup()`: remove duplicates in databases.
+
+- `distart()`: Computes distances between consecutive points in a dataset, assisting in estimating fishing vessel movement and potential coverage.
+
+- `process_art_effort()`: Processes artisanal fishing effort data by assigning coordinates to grid cells, calculating the mean swept area (SA) for each cell, and returning a data frame with the spatial distribution of fishing effort.
+
+- `process_art_effort()`: Calculates effort (*SA*) and the Swept Area Ratio (*SAR*) by dividing fishing effort data by cell area, indicating the impact intensity across different areas.
+
+Each function supports artisanal fishery data analysis, focusing on measuring and visualizing fishing impacts using spatial grid-based calculations.
 
 # Initial steps
 
@@ -314,11 +329,30 @@ This approach provides a structured analysis of fishing effort across spatial gr
 
 
 ``` r
-ggplot(processed_data, aes(x = promedio_SA)) +
-  geom_histogram(aes(y = ..density..), bins = 30, fill = "skyblue", color = "black", alpha = 0.7) +
+sa <- ggplot(processed_data, 
+             aes(x = promedio_SA)) +
+  geom_histogram(aes(y = ..density..), 
+                 bins = 30, 
+                 fill = "skyblue", 
+                 color = "black", 
+                 alpha = 0.7) +
   geom_density(color = "darkred", size = 1) +
-  labs(title = "Effort Distribution (hours)", x = "SA", y = "Density") +
+  labs(title = "Effort Distribution (hours)",
+       x = "SA", y = "Density") +
   theme_minimal()
+
+sar <- ggplot(processed_data, aes(x = SAR)) +
+  geom_histogram(aes(y = ..density..),
+                 bins = 30, 
+                 fill = "#bae4b3", 
+                 color = "black", 
+                 alpha = 0.7) +
+  geom_density(color = "darkred", size = 1) +
+  labs(title = "SAR Distribution", x = "SAR", y = "Density") +
+  theme_minimal()
+
+ggarrange(sa, sar,
+          ncol =2)
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-12-1.jpeg" style="display: block; margin: auto;" />
