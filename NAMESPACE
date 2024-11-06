@@ -2,6 +2,9 @@
 
 export(SAbarrida)
 export(distart)
+export(process_art_effort)
 export(read_artdata)
 export(remo_dup)
+import(dplyr)
+import(sf)
 importFrom(utils,read.table)
