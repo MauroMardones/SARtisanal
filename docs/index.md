@@ -2,15 +2,16 @@
 title: "User Guide **SARtisanal** package to calculate of Swept Area Ratio (SAR) in artisanal fisheries context"
 subtitle: "Proyecto IN-BENTO (Desarrollo de bioindicadores para el seguimiento de los ecosistemas intermareal y submareal sometidos a explotación marisquera en el litoral de Huelva) (Consejería de Universidad, Investigación e Innovación de la Junta de Andalucía y el Gobierno de España. Financiado por la Unión Europea-NextGeneration EU. MRR)"
 author: "Mardones. M., Delgado, M.,..."
-date:  "05 November, 2024"
-#bibliography: INBENTO.bib
-#csl: apa.csl
+date:  "06 November, 2024"
+bibliography: SARtisanal.bib
+csl: apa.csl
 link-citations: yes
 linkcolor: blue
 output:
   html_document:
     keep_md: true
     toc: true
+    toc_depth: 3
     toc_float:
       collapsed: false
       smooth_scroll: false
@@ -20,28 +21,6 @@ output:
     html-math-method: katex
     self-contained: true
     code-tools: true
-# title: "![](IEO-logo2.png){width=10cm}"
-# output:
-#   bookdown::pdf_document2:
-#     includes:
-#       before_body: titulo.sty
-#     keep_tex: yes
-#     number_sections: no
-#     toc: true
-#     toc_depth: 3
-# bibliography: INBENTO.bib
-# csl: apa.csl
-# link-citations: yes
-# linkcolor: blue
-# indent: no
-# header-includes:
-# - \usepackage{fancyhdr}
-# - \pagestyle{fancy}
-# - \fancyhf{}
-# - \lfoot[\thepage]{}
-# - \rfoot[]{\thepage}
-# - \fontsize{12}{22}
-# - \selectfont
 ---
 
 \newpage
@@ -81,6 +60,10 @@ library(gtsummary)
 library(egg)
 library(ggthemes)
 library(sf)
+library(sp)
+library(maps)
+library(pheatmap)
+library(spdep) # autocorrelation test
 ```
 Example to load own data;
 
@@ -100,52 +83,59 @@ if (all(file.exists(file.path(carpeta, archivos)))) {
 }
 ```
 
-Calculating distances;
-
 1. Load data example
+
+
+`Sartisanal` package has example data to use like guide. This data is using General Pack Radio Service/Global Mobile System (GPRS/GMS) technology data from a fleet of nearly 100 vessels in the artisanal fishery of wedge clam in the Gulf of Cadiz. 
 
 
 ``` r
 data("artdata")
 ```
 
-
-2. Remove duplicate data with `remo_dup`;
+what kind of information has the example data? This could be a base data to upload your own data with a similar format and similar valiarbles (columns) to reporduce this analysis. Each vraiable is explained in documentation of `SARtisanal`.
 
 
 ``` r
-head(artdata)
+glimpse(artdata)
 ```
 
 ```
-##                     FK_ERES      FECHA      DIA     HORA FK_BUQUE MATRICULA
-## Draga_01_2009.txt.1     601 29/01/2009 THURSDAY 13:31:17     9883  SE-1-768
-## Draga_01_2009.txt.2     601 29/01/2009 THURSDAY 13:39:15     9883  SE-1-768
-## Draga_01_2009.txt.3     601 29/01/2009 THURSDAY 13:42:13     9883  SE-1-768
-## Draga_01_2009.txt.4     601 29/01/2009 THURSDAY 13:51:13     9883  SE-1-768
-## Draga_01_2009.txt.5     601 30/01/2009   FRIDAY 11:01:20     9883  SE-1-768
-## Draga_01_2009.txt.6     601 30/01/2009   FRIDAY 12:22:22     9883  SE-1-768
-##                       PUERTO FK_TIPO_F F_LOCALIZA N_LONGITUD N_LATITUD      N_X
-## Draga_01_2009.txt.1 SANLUCAR         3  29-JAN-09  -6.338148  36.80516 202279.3
-## Draga_01_2009.txt.2 SANLUCAR         3  29-JAN-09  -6.338153  36.80516 202278.8
-## Draga_01_2009.txt.3 SANLUCAR         3  29-JAN-09  -6.338127  36.80516 202281.2
-## Draga_01_2009.txt.4 SANLUCAR         3  29-JAN-09  -6.338148  36.80515 202279.2
-## Draga_01_2009.txt.5 SANLUCAR         3  30-JAN-09  -6.451208  36.87560 192471.5
-## Draga_01_2009.txt.6 SANLUCAR         3  30-JAN-09  -6.360342  36.79270 200249.9
-##                         N_Y N_VELOCIDAD N_RUMBO N_SATELITES N_EN_PUERTO
-## Draga_01_2009.txt.1 4078662     0.10799  22.100           5           0
-## Draga_01_2009.txt.2 4078661     0.11879  66.224           7           1
-## Draga_01_2009.txt.3 4078662     0.14039  87.848           8           1
-## Draga_01_2009.txt.4 4078661     0.10799 114.800           8           1
-## Draga_01_2009.txt.5 4086838     1.83423  12.982           9           0
-## Draga_01_2009.txt.6 4077348     0.76350 260.670           7           0
-##                     L_BACKUP FK_ACTIVI FK_ESTADO FK_MODAL
-## Draga_01_2009.txt.1        0         3         5        0
-## Draga_01_2009.txt.2        0         1         5        0
-## Draga_01_2009.txt.3        0         1         5        0
-## Draga_01_2009.txt.4        0         1         5        0
-## Draga_01_2009.txt.5        0         4         3        3
-## Draga_01_2009.txt.6        0         3         3        0
+## Rows: 43,430
+## Columns: 21
+## $ FK_ERES     <int> 601, 601, 601, 601, 601, 601, 601, 601, 601, 601, 601, 601…
+## $ FECHA       <chr> "29/01/2009", "29/01/2009", "29/01/2009", "29/01/2009", "3…
+## $ DIA         <chr> "THURSDAY", "THURSDAY", "THURSDAY", "THURSDAY", "FRIDAY", …
+## $ HORA        <chr> "13:31:17", "13:39:15", "13:42:13", "13:51:13", "11:01:20"…
+## $ FK_BUQUE    <int> 9883, 9883, 9883, 9883, 9883, 9883, 9883, 9883, 9883, 9883…
+## $ MATRICULA   <chr> "SE-1-768", "SE-1-768", "SE-1-768", "SE-1-768", "SE-1-768"…
+## $ PUERTO      <chr> "SANLUCAR", "SANLUCAR", "SANLUCAR", "SANLUCAR", "SANLUCAR"…
+## $ FK_TIPO_F   <int> 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3…
+## $ F_LOCALIZA  <chr> "29-JAN-09", "29-JAN-09", "29-JAN-09", "29-JAN-09", "30-JA…
+## $ N_LONGITUD  <dbl> -6.338148, -6.338153, -6.338127, -6.338148, -6.451208, -6.…
+## $ N_LATITUD   <dbl> 36.80516, 36.80516, 36.80516, 36.80515, 36.87560, 36.79270…
+## $ N_X         <dbl> 202279.3, 202278.8, 202281.2, 202279.2, 192471.5, 200249.9…
+## $ N_Y         <dbl> 4078662, 4078661, 4078662, 4078661, 4086838, 4077348, 4078…
+## $ N_VELOCIDAD <dbl> 0.10799, 0.11879, 0.14039, 0.10799, 1.83423, 0.76350, 0.25…
+## $ N_RUMBO     <dbl> 22.1000, 66.2240, 87.8480, 114.8000, 12.9820, 260.6700, 31…
+## $ N_SATELITES <int> 5, 7, 8, 8, 9, 7, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 10, 10, 9,…
+## $ N_EN_PUERTO <int> 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+## $ L_BACKUP    <int> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…
+## $ FK_ACTIVI   <int> 3, 1, 1, 1, 4, 3, 1, 1, 1, 1, 1, 3, 3, 4, 4, 4, 4, 3, 3, 3…
+## $ FK_ESTADO   <int> 5, 5, 5, 5, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3…
+## $ FK_MODAL    <int> 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 0, 0, 0…
+```
+A common error with this kind of information, its deal witgh duplicated data. To remove, we use `remo_dup` function.
+
+2. Remove duplicate and test differences
+
+
+``` r
+dim(artdata)
+```
+
+```
+## [1] 43430    21
 ```
 
 ``` r
@@ -157,7 +147,9 @@ dim(artdata2)
 ## [1] 41663    21
 ```
 
-3. Call the `distar` function using `mapply`;
+3. Calculate distance
+
+Now, first analytical process its calculate the distance between trawls. We calculate distance row by row, assuming a conntuniun register of fishery activity. To do that, we use the `distar` function using `mapply`;
 
 
 ``` r
@@ -174,8 +166,7 @@ artdata2 <- artdata2 %>%
   mutate_if(is.numeric, round, 3)
 ```
 
-
-Visualizing data with `skim`;
+Visualizing new data with `skim`;
 
 
 ``` r
@@ -231,20 +222,238 @@ Table: Data summary
 |FK_MODAL      |         0|             1|       1.79|     1.51|       0.00|       0.00|       3.00|       3.00|       4.00|▆▁▁▇▁ |
 |distancia     |         1|             1|    1127.35|  4130.41|       0.00|     101.82|     240.32|     608.74|  105605.95|▇▁▁▁▁ |
 
-# Calculate SAR
+# Calculate Distance between trawls.
 
-First Swept Area using `SAbarrida`;
+First Swept Area using distance by width trawl resulting in `SA` variable in m^2. We use different width trawl. To do this we use `SAbarrida` function; 
 
 
 ``` r
 artdataSA <- artdata2 %>% 
   mutate(
-    SA = SAbarrida(distancia, ancho = 2.5),  # Cálculo del SA con ancho 2.5 metros
-    SA2 = SAbarrida(distancia, ancho = 3)  # Cálculo del SA con otro ancho
+    SA = SAbarrida(distancia, ancho = 2.5),  
+    SA2 = SAbarrida(distancia, ancho = 3)  
   )
+summary(artdataSA$SA)
+```
+
+```
+##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA's 
+##      0.0    254.5    600.8   2818.4   1521.8 264014.9        1
+```
+
+``` r
+summary(artdataSA$SA2)
+```
+
+```
+##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA's 
+##      0.0    305.4    721.0   3382.0   1826.2 316817.8        1
+```
+Just by know  the structure of data, we made a correlation plot simple plot using *pheatmap* library [@Kolde2019].
+
+
+``` r
+numeric_data <- artdataSA %>%
+  select_if(is.numeric) %>%
+  select_if(~ var(.) != 0) %>%  
+  na.omit()  
+
+# select variables to example
+selected_data <- artdataSA %>%
+  select(N_LATITUD, N_LONGITUD, N_VELOCIDAD, N_SATELITES , N_SATELITES , distancia, SA, SA2) %>%
+  na.omit()  
+
+cor_matrix <- cor(selected_data)
 ```
 
 
-# Maps
+
+``` r
+pheatmap(cor_matrix, 
+         display_numbers = TRUE, 
+         number_format = "%.2f", 
+         main = "Correlation Heatmap")
+```
+
+<img src="index_files/figure-html/unnamed-chunk-10-1.jpeg" style="display: block; margin: auto;" />
+
+# Processing and Visualizing Fishing Effort Data by Grid Cell
+
+1. Filter and Validate Data: The code begins by filtering `artdataSA` to ensure all entries contain valid values for longitude (`N_LONGITUD`), latitude (`N_LATITUD`), and swept area (SA). This step removes entries with any missing values in these columns.
+
+2. Define Study Area Boundaries: It calculates the minimum and maximum values for longitude and latitude to define the geographical boundaries of the study area.
+
+3. Generate Spatial Grid: Using these boundaries, a spatial grid is created where each cell represents a 0.02° x 0.02° area. Each cell is uniquely identified by a `cellid`.
+
+4. Spatial Data Transformation and Aggregation: The data is converted to a spatial format (`sf`) to align with the grid. Each data point is assigned to its respective grid cell, where the mean SA for each cell is calculated, representing the average fishing effort in that location.
+
+5. Handle Missing Data: The code checks for cells without SA data and assigns `NA` to indicate missing values.
+
+
+
+``` r
+artdataSA_validos <- artdataSA %>%
+  filter(!is.na(N_LONGITUD) & !is.na(N_LATITUD) & !is.na(SA))
+
+min_long <- min(artdataSA_validos$N_LONGITUD, na.rm = TRUE)
+max_long <- max(artdataSA_validos$N_LONGITUD, na.rm = TRUE)
+min_lat <- min(artdataSA_validos$N_LATITUD, na.rm = TRUE)
+max_lat <- max(artdataSA_validos$N_LATITUD, na.rm = TRUE)
+
+rc3 <- st_as_sfc(st_bbox(c(xmin = min_long, xmax = max_long,
+                             ymin = min_lat, ymax = max_lat), crs = 4326))
+
+Grid2 <- rc3 %>%
+  sf::st_make_grid(cellsize = c(0.02, 0.02)) %>%
+  sf::st_cast("MULTIPOLYGON") %>%
+  sf::st_sf() %>%
+  dplyr::mutate(cellid = row_number())
+
+data_sf <- st_as_sf(artdataSA_validos, coords = c("N_LONGITUD", "N_LATITUD"), crs = 4326)
+
+promedio_SA_por_celda <- data_sf %>%
+  st_join(Grid2) %>%
+  group_by(cellid) %>%
+  summarize(promedio_SA = mean(SA, na.rm = TRUE), .groups = "drop") 
+
+# Verifica si hay datos en promedio_SA_por_celda
+if (nrow(promedio_SA_por_celda) == 0) {
+  stop("No hay datos para graficar. Verifica la unión de datos.")
+}
+
+# Mantener solo una columna de cellid y eliminar duplicados
+promedio_SA_por_celda <- promedio_SA_por_celda %>%
+  distinct(cellid, .keep_all = TRUE)  
+
+# Unir geometría de Grid2 con promedio_SA_por_celda
+promedio_SA_por_celda <- Grid2 %>%
+  st_join(promedio_SA_por_celda) %>%
+  st_as_sf()  # Asegúrate de que es un objeto sf
+
+# Verifica la geometría y los datos
+if (any(is.na(promedio_SA_por_celda$promedio_SA))) {
+  warning("Hay valores NA en promedio_SA. Asegúrate de que sean eliminados o manejados.")
+}
+
+# Asegurarse de que las celdas vacías tengan NA en `promedio_SA`
+promedio_SA_por_celda <- promedio_SA_por_celda %>%
+  mutate(promedio_SA = ifelse(is.na(promedio_SA), NA, promedio_SA))
+```
+
+
+Now, a histogram with an overlaid density plot is created to visualize the distribution of mean SA values across grid cells. This provides a graphical representation of fishing effort concentration, highlighting areas with high or low activity.
+
+This approach provides a structured analysis of fishing effort across spatial grid cells, supporting further spatial and statistical analyses.
+
+
+``` r
+ggplot(promedio_SA_por_celda, aes(x = promedio_SA)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "skyblue", color = "black", alpha = 0.7) +
+  geom_density(color = "darkred", size = 1) +
+  labs(title = "Effort Distribution (hours)", x = "SA", y = "Density") +
+  theme_minimal()
+```
+
+<img src="index_files/figure-html/unnamed-chunk-12-1.jpeg" style="display: block; margin: auto;" />
+
+# Calculating Swept Area Ratio (SAR) by Cell
+
+Grid Cell Area Calculation: This section begins by ensuring that each cellid in Grid2 is an integer, facilitating compatibility for data joins. It also calculates the area for each grid cell (`area_celda`) using spatial geometry and converts this measurement to a numeric format.
+
+Prepare Data and Join Grid Attributes: In the `promedio_SA_por_celda2` dataset, cellid values are also converted to integers. The data is then joined with Grid2 on cellid, allowing each record to incorporate the area of the corresponding grid cell (`area_celda`).
+
+Calculate Swept Area Ratio (`SAR`): Using the formula for SAR, which is the mean swept area (promedio_SA) divided by the cell area (`area_celda`), the swept area ratio is calculated and multiplied by 100 to express it as a percentage.
+
+This code provides a quantitative measure (`SAR`) that indicates the fishing effort density within each grid cell, enabling the assessment of spatial impacts of fishery fleets.
+
+
+``` r
+Grid2 <- Grid2 %>%
+  mutate(cellid = as.integer(cellid), 
+         area_celda = as.numeric(st_area(.)))  
+
+promedio_SA_por_celda2 <- promedio_SA_por_celda %>%
+  mutate(cellid = as.integer(cellid.x)) %>%  
+  left_join(st_drop_geometry(Grid2 %>% select(cellid, area_celda)), by = "cellid") %>%
+  mutate(SAR = (promedio_SA / area_celda)*100) %>% 
+  mutate(SAR_niveles = cut(SAR, breaks = c(0, 0.2, 0.4, 0.6, 0.8, Inf),
+                           labels = c("0-0.2", "0.2-0-4", "0.4-0.6", "0.6-0.8", ">0.8"),
+                           include.lowest = TRUE))
+```
+
+
+Finally, we have a map with spatial distribution of `SAR`
+
+
+``` r
+p_sar <- ggplot() +
+  geom_sf(data = promedio_SA_por_celda2 %>% drop_na(SAR_niveles), 
+          aes(fill = SAR_niveles), color = "grey") +
+ 
+  scale_fill_manual(values = c('#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026'),
+                    name = "SAR") +
+  labs(title = "Mapa de Calor Espacial del SAR") +
+  coord_sf(xlim = c(-7.6, -6.3), 
+           ylim = c(36.65, 37.3)) + 
+  theme_few() +
+  theme(legend.position = "right")  
+
+p_sar
+```
+
+<img src="index_files/figure-html/unnamed-chunk-14-1.jpeg" style="display: block; margin: auto;" />
+
+Now we calculate Spatial Autocorrelation Analysis of Swept Area Ratio (SAR) using *spdep* package [@Bivand2022]. 
+
+The coordinates for the centroids of each grid cell are extracted using st_centroid and stored in coords.
+Neighboring cells within a specified threshold distance (0.1 units here) are defined using dnearneigh, which creates a spatial neighborhood structure. These neighboring relationships are then transformed into spatial weights using nb2listw with a "W" style, which normalizes weights for each cell by the number of neighbors, emphasizing relative connectivity.
+
+
+``` r
+promedio_SA_por_celda3 <- promedio_SA_por_celda2 %>% 
+  drop_na(SAR)
+
+coords <- st_centroid(promedio_SA_por_celda3) %>% 
+  st_coordinates()
+neighbors <- dnearneigh(coords, 0, 0.1)  # Define la distancia umbral
+weights <- nb2listw(neighbors, style = "W")
+
+# Calcular el índice de Moran
+moran_test <- moran.test(promedio_SA_por_celda3$SAR, weights)
+
+moran_test
+```
+
+```
+## 
+## 	Moran I test under randomisation
+## 
+## data:  promedio_SA_por_celda3$SAR  
+## weights: weights    
+## 
+## Moran I statistic standard deviate = 6.6618, p-value = 1.353e-11
+## alternative hypothesis: greater
+## sample estimates:
+## Moran I statistic       Expectation          Variance 
+##      0.0827490652     -0.0038759690      0.0001690861
+```
+
+The Moran I test evaluates the presence of spatial autocorrelation in this case in the SAR (Swept Area Ratio) per cell. 
+
+
+- If Moran I is close to 1, it suggests strong positive spatial autocorrelation (cells with similar SAR values tend to cluster).
+
+- If Moran I is close to -1, it indicates strong negative spatial autocorrelation (cells with different SAR values tend to be adjacent).
+
+- If Moran I is close to 0, it implies no spatial autocorrelation (a random distribution).
+
+In this case, the positive value of 0.0827 indicates a slight positive spatial autocorrelation, meaning there are mild clusters of cells with similar SAR values. 
+
+- `p-value` (1.353e-11): The p-value is very low (below 0.05), making this result statistically significant. This allows you to reject the null hypothesis of no spatial autocorrelation. In other words, there is significant evidence that SAR values exhibit a non-random spatial pattern, even though the spatial autocorrelation is mild.
+
+
+Although the spatial autocorrelation in SAR is not strong, it is significant. This suggests that in certain areas, cells tend to have similar SAR values, potentially due to environmental factors, fishing activity patterns, or specific area characteristics that influence fishing density.
+
+
 
 # References

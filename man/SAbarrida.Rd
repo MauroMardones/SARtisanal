@@ -20,7 +20,7 @@ Calculates the Swept Area (SA) based on distance and the width of the fishing ge
 }
 \examples{
 # Calculate the swept area with a width of 2.5 meters
-distances <- c(100, 200, 300)
-swept_area <- SAbarrida(distances, ancho = 2.5)
-swept_area_pre <- SAbarrida(distances, ancho = 2.5)
+distancia <- c(100, 200, 300)
+swept_area <- SAbarrida(distancia, ancho = 2.5)
+swept_area_pre <- SAbarrida(distancia, ancho = 2.5)
 }
