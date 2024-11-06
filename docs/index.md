@@ -269,33 +269,7 @@ summary(artdataSA$SA2)
 ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA's 
 ##      0.0    305.4    721.0   3382.0   1826.2 316817.8        1
 ```
-Just by know  the structure of data, we made a correlation plot simple plot using *pheatmap* library [@Kolde2019].
 
-
-``` r
-numeric_data <- artdataSA %>%
-  select_if(is.numeric) %>%
-  select_if(~ var(.) != 0) %>%  
-  na.omit()  
-
-# select variables to example
-selected_data <- artdataSA %>%
-  select(N_LATITUD, N_LONGITUD, N_VELOCIDAD, N_SATELITES , N_SATELITES , distancia, SA, SA2) %>%
-  na.omit()  
-
-cor_matrix <- cor(selected_data)
-```
-
-
-
-``` r
-pheatmap(cor_matrix, 
-         display_numbers = TRUE, 
-         number_format = "%.2f", 
-         main = "Correlation Heatmap")
-```
-
-<img src="index_files/figure-html/unnamed-chunk-10-1.jpeg" style="display: block; margin: auto;" />
 
 # Processing and Visualizing Fishing Effort Data
 
@@ -355,7 +329,7 @@ ggarrange(sa, sar,
           ncol =2)
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-12-1.jpeg" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-10-1.jpeg" style="display: block; margin: auto;" />
 
 # Calculating Swept Area Ratio (SAR)
 
@@ -400,6 +374,36 @@ p_sar <- ggplot() +
   theme(legend.position = "right")  
 
 p_sar
+```
+
+<img src="index_files/figure-html/unnamed-chunk-11-1.jpeg" style="display: block; margin: auto;" />
+
+# Another things
+
+Just by know  the structure of data, we made a correlation plot simple plot using *pheatmap* library [@Kolde2019].
+
+
+``` r
+numeric_data <- artdataSA %>%
+  select_if(is.numeric) %>%
+  select_if(~ var(.) != 0) %>%  
+  na.omit()  
+
+# select variables to example
+selected_data <- artdataSA %>%
+  select(N_LATITUD, N_LONGITUD, N_VELOCIDAD, N_SATELITES , N_SATELITES , distancia, SA, SA2) %>%
+  na.omit()  
+
+cor_matrix <- cor(selected_data)
+```
+
+
+
+``` r
+pheatmap(cor_matrix, 
+         display_numbers = TRUE, 
+         number_format = "%.2f", 
+         main = "Correlation Heatmap")
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-13-1.jpeg" style="display: block; margin: auto;" />
