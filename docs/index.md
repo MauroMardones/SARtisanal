@@ -15,7 +15,7 @@ output:
     toc_float:
       collapsed: false
       smooth_scroll: false
-    theme: cosmo
+    theme: simplex
     fontsize: 0.9em
     linestretch: 1.7
     html-math-method: katex
