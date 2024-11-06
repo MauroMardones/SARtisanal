@@ -224,7 +224,12 @@ Table: Data summary
 
 # Calculate Distance between trawls.
 
-First Swept Area using distance by width trawl resulting in `SA` variable in m^2. We use different width trawl. To do this we use `SAbarrida` function; 
+First Swept Area using distance by width trawl resulting in `SA` variable in m^2, where `SA` will be the distance traveled by the drag and the opening in meters of the dredge, that is;
+
+$$
+SA = Distance \times width \ trawl
+$$
+We use different width trawl. To do this we use `SAbarrida` function; 
 
 
 ``` r
@@ -277,7 +282,10 @@ pheatmap(cor_matrix,
 
 <img src="index_files/figure-html/unnamed-chunk-10-1.jpeg" style="display: block; margin: auto;" />
 
-# Processing and Visualizing Fishing Effort Data by Grid Cell
+# Processing and Visualizing Fishing Effort Data
+
+The `procces_art_effort` function have the next component of analysis;
+
 
 1. Filter and Validate Data: The code begins by filtering `artdataSA` to ensure all entries contain valid values for longitude (`N_LONGITUD`), latitude (`N_LATITUD`), and swept area (SA). This step removes entries with any missing values in these columns.
 
@@ -289,57 +297,16 @@ pheatmap(cor_matrix,
 
 5. Handle Missing Data: The code checks for cells without SA data and assigns `NA` to indicate missing values.
 
+the, with `artdataSA`, we use `procces_art_effort` function;
 
 
 ``` r
-artdataSA_validos <- artdataSA %>%
-  filter(!is.na(N_LONGITUD) & !is.na(N_LATITUD) & !is.na(SA))
-
-min_long <- min(artdataSA_validos$N_LONGITUD, na.rm = TRUE)
-max_long <- max(artdataSA_validos$N_LONGITUD, na.rm = TRUE)
-min_lat <- min(artdataSA_validos$N_LATITUD, na.rm = TRUE)
-max_lat <- max(artdataSA_validos$N_LATITUD, na.rm = TRUE)
-
-rc3 <- st_as_sfc(st_bbox(c(xmin = min_long, xmax = max_long,
-                             ymin = min_lat, ymax = max_lat), crs = 4326))
-
-Grid2 <- rc3 %>%
-  sf::st_make_grid(cellsize = c(0.02, 0.02)) %>%
-  sf::st_cast("MULTIPOLYGON") %>%
-  sf::st_sf() %>%
-  dplyr::mutate(cellid = row_number())
-
-data_sf <- st_as_sf(artdataSA_validos, coords = c("N_LONGITUD", "N_LATITUD"), crs = 4326)
-
-promedio_SA_por_celda <- data_sf %>%
-  st_join(Grid2) %>%
-  group_by(cellid) %>%
-  summarize(promedio_SA = mean(SA, na.rm = TRUE), .groups = "drop") 
-
-# Verifica si hay datos en promedio_SA_por_celda
-if (nrow(promedio_SA_por_celda) == 0) {
-  stop("No hay datos para graficar. Verifica la unión de datos.")
-}
-
-# Mantener solo una columna de cellid y eliminar duplicados
-promedio_SA_por_celda <- promedio_SA_por_celda %>%
-  distinct(cellid, .keep_all = TRUE)  
-
-# Unir geometría de Grid2 con promedio_SA_por_celda
-promedio_SA_por_celda <- Grid2 %>%
-  st_join(promedio_SA_por_celda) %>%
-  st_as_sf()  # Asegúrate de que es un objeto sf
-
-# Verifica la geometría y los datos
-if (any(is.na(promedio_SA_por_celda$promedio_SA))) {
-  warning("Hay valores NA en promedio_SA. Asegúrate de que sean eliminados o manejados.")
-}
-
-# Asegurarse de que las celdas vacías tengan NA en `promedio_SA`
-promedio_SA_por_celda <- promedio_SA_por_celda %>%
-  mutate(promedio_SA = ifelse(is.na(promedio_SA), NA, promedio_SA))
+processed_data <- process_art_effort(artdataSA, 
+                                     lon_col = "N_LONGITUD", 
+                                     lat_col = "N_LATITUD", 
+                                     sa_col = "SA", 
+                                     cell_size = 0.02)
 ```
-
 
 Now, a histogram with an overlaid density plot is created to visualize the distribution of mean SA values across grid cells. This provides a graphical representation of fishing effort concentration, highlighting areas with high or low activity.
 
@@ -347,7 +314,7 @@ This approach provides a structured analysis of fishing effort across spatial gr
 
 
 ``` r
-ggplot(promedio_SA_por_celda, aes(x = promedio_SA)) +
+ggplot(processed_data, aes(x = promedio_SA)) +
   geom_histogram(aes(y = ..density..), bins = 30, fill = "skyblue", color = "black", alpha = 0.7) +
   geom_density(color = "darkred", size = 1) +
   labs(title = "Effort Distribution (hours)", x = "SA", y = "Density") +
@@ -356,30 +323,24 @@ ggplot(promedio_SA_por_celda, aes(x = promedio_SA)) +
 
 <img src="index_files/figure-html/unnamed-chunk-12-1.jpeg" style="display: block; margin: auto;" />
 
-# Calculating Swept Area Ratio (SAR) by Cell
+# Calculating Swept Area Ratio (SAR)
+
+According to @Church2016, the calculation of the Swept Area Ratio (SAR) `SA` is the swept area (mts/2), `CA` is the area of the cell and `SAR` is the proportion of the swept area (equivalent to the number of times the cell was swept).
+
+where;
+
+$$
+SAR = \frac{SA}{CA}
+$$
 
 Grid Cell Area Calculation: This section begins by ensuring that each cellid in Grid2 is an integer, facilitating compatibility for data joins. It also calculates the area for each grid cell (`area_celda`) using spatial geometry and converts this measurement to a numeric format.
 
-Prepare Data and Join Grid Attributes: In the `promedio_SA_por_celda2` dataset, cellid values are also converted to integers. The data is then joined with Grid2 on cellid, allowing each record to incorporate the area of the corresponding grid cell (`area_celda`).
+Prepare Data and Join Grid Attributes: In the `processed_data` dataset, cellid values are also converted to integers. The data is then joined with Grid2 on cellid, allowing each record to incorporate the area of the corresponding grid cell (`area_celda`).
 
 Calculate Swept Area Ratio (`SAR`): Using the formula for SAR, which is the mean swept area (promedio_SA) divided by the cell area (`area_celda`), the swept area ratio is calculated and multiplied by 100 to express it as a percentage.
 
 This code provides a quantitative measure (`SAR`) that indicates the fishing effort density within each grid cell, enabling the assessment of spatial impacts of fishery fleets.
 
-
-``` r
-Grid2 <- Grid2 %>%
-  mutate(cellid = as.integer(cellid), 
-         area_celda = as.numeric(st_area(.)))  
-
-promedio_SA_por_celda2 <- promedio_SA_por_celda %>%
-  mutate(cellid = as.integer(cellid.x)) %>%  
-  left_join(st_drop_geometry(Grid2 %>% select(cellid, area_celda)), by = "cellid") %>%
-  mutate(SAR = (promedio_SA / area_celda)*100) %>% 
-  mutate(SAR_niveles = cut(SAR, breaks = c(0, 0.2, 0.4, 0.6, 0.8, Inf),
-                           labels = c("0-0.2", "0.2-0-4", "0.4-0.6", "0.6-0.8", ">0.8"),
-                           include.lowest = TRUE))
-```
 
 
 Finally, we have a map with spatial distribution of `SAR`
@@ -387,7 +348,13 @@ Finally, we have a map with spatial distribution of `SAR`
 
 ``` r
 p_sar <- ggplot() +
-  geom_sf(data = promedio_SA_por_celda2 %>% drop_na(SAR_niveles), 
+  geom_sf(data = processed_data %>%
+            mutate(
+           SAR_niveles = cut(SAR,
+                             breaks = c(0, 0.2, 0.4, 0.6, 0.8, Inf),
+                             labels = c("0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", ">0.8"),
+                             include.lowest = TRUE)) %>% 
+    drop_na(SAR_niveles), 
           aes(fill = SAR_niveles), color = "grey") +
  
   scale_fill_manual(values = c('#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026'),
@@ -401,7 +368,7 @@ p_sar <- ggplot() +
 p_sar
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-14-1.jpeg" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-13-1.jpeg" style="display: block; margin: auto;" />
 
 Now we calculate Spatial Autocorrelation Analysis of Swept Area Ratio (SAR) using *spdep* package [@Bivand2022]. 
 
@@ -410,16 +377,16 @@ Neighboring cells within a specified threshold distance (0.1 units here) are def
 
 
 ``` r
-promedio_SA_por_celda3 <- promedio_SA_por_celda2 %>% 
+processed_data3 <- processed_data %>% 
   drop_na(SAR)
 
-coords <- st_centroid(promedio_SA_por_celda3) %>% 
+coords <- st_centroid(processed_data3) %>% 
   st_coordinates()
 neighbors <- dnearneigh(coords, 0, 0.1)  # Define la distancia umbral
 weights <- nb2listw(neighbors, style = "W")
 
 # Calcular el índice de Moran
-moran_test <- moran.test(promedio_SA_por_celda3$SAR, weights)
+moran_test <- moran.test(processed_data3$SAR, weights)
 
 moran_test
 ```
@@ -428,7 +395,7 @@ moran_test
 ## 
 ## 	Moran I test under randomisation
 ## 
-## data:  promedio_SA_por_celda3$SAR  
+## data:  processed_data3$SAR  
 ## weights: weights    
 ## 
 ## Moran I statistic standard deviate = 6.6618, p-value = 1.353e-11
@@ -453,6 +420,9 @@ In this case, the positive value of 0.0827 indicates a slight positive spatial a
 
 
 Although the spatial autocorrelation in SAR is not strong, it is significant. This suggests that in certain areas, cells tend to have similar SAR values, potentially due to environmental factors, fishing activity patterns, or specific area characteristics that influence fishing density.
+
+
+(*Work in progress...*)
 
 # Aknowledgment 
 

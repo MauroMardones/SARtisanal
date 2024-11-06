@@ -233,7 +233,7 @@ $$
 
 Grid Cell Area Calculation: This section begins by ensuring that each cellid in Grid2 is an integer, facilitating compatibility for data joins. It also calculates the area for each grid cell (`area_celda`) using spatial geometry and converts this measurement to a numeric format.
 
-Prepare Data and Join Grid Attributes: In the `promedio_SA_por_celda2` dataset, cellid values are also converted to integers. The data is then joined with Grid2 on cellid, allowing each record to incorporate the area of the corresponding grid cell (`area_celda`).
+Prepare Data and Join Grid Attributes: In the `processed_data` dataset, cellid values are also converted to integers. The data is then joined with Grid2 on cellid, allowing each record to incorporate the area of the corresponding grid cell (`area_celda`).
 
 Calculate Swept Area Ratio (`SAR`): Using the formula for SAR, which is the mean swept area (promedio_SA) divided by the cell area (`area_celda`), the swept area ratio is calculated and multiplied by 100 to express it as a percentage.
 
@@ -271,16 +271,16 @@ The coordinates for the centroids of each grid cell are extracted using st_centr
 Neighboring cells within a specified threshold distance (0.1 units here) are defined using dnearneigh, which creates a spatial neighborhood structure. These neighboring relationships are then transformed into spatial weights using nb2listw with a "W" style, which normalizes weights for each cell by the number of neighbors, emphasizing relative connectivity.
 
 ```{r}
-promedio_SA_por_celda3 <- promedio_SA_por_celda2 %>% 
+processed_data3 <- processed_data %>% 
   drop_na(SAR)
 
-coords <- st_centroid(promedio_SA_por_celda3) %>% 
+coords <- st_centroid(processed_data3) %>% 
   st_coordinates()
 neighbors <- dnearneigh(coords, 0, 0.1)  # Define la distancia umbral
 weights <- nb2listw(neighbors, style = "W")
 
 # Calcular el índice de Moran
-moran_test <- moran.test(promedio_SA_por_celda3$SAR, weights)
+moran_test <- moran.test(processed_data3$SAR, weights)
 
 moran_test
 ```
