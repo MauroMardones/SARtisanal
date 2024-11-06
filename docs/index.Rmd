@@ -1,7 +1,7 @@
 ---
-title: "User Guide **SARtisanal** package to calculate of Swept Area Ratio (SAR) in artisanal fisheries context"
-subtitle: "Proyecto IN-BENTO (Desarrollo de bioindicadores para el seguimiento de los ecosistemas intermareal y submareal sometidos a explotación marisquera en el litoral de Huelva) (Consejería de Universidad, Investigación e Innovación de la Junta de Andalucía y el Gobierno de España. Financiado por la Unión Europea-NextGeneration EU. MRR)"
-author: "Mardones. M., Delgado, M.,..."
+title: "User Guide **SARtisanal** package"
+subtitle: "Methodology used to calculate of Swept Area Ratio (SAR) in artisanal fisheries context"
+author: "Mardones. M., Delgado, M., Magro, A..."
 date:  "`r format(Sys.time(), '%d %B, %Y')`"
 bibliography: SARtisanal.bib
 csl: apa.csl
@@ -333,6 +333,8 @@ In this case, the positive value of 0.0827 indicates a slight positive spatial a
 
 Although the spatial autocorrelation in SAR is not strong, it is significant. This suggests that in certain areas, cells tend to have similar SAR values, potentially due to environmental factors, fishing activity patterns, or specific area characteristics that influence fishing density.
 
+# Aknowledgment 
 
+Proyecto IN-BENTO (Desarrollo de bioindicadores para el seguimiento de los ecosistemas intermareal y submareal sometidos a explotación marisquera en el litoral de Huelva) (Consejería de Universidad, Investigación e Innovación de la Junta de Andalucía y el Gobierno de España. Financiado por la Unión Europea-NextGeneration EU. MRR).
 
 # References
