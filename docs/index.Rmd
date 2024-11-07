@@ -75,8 +75,10 @@ library(SARtisanal)
 and load another important packages;
 
 ```{r libs, message=FALSE}
-lapply(c("tidyverse", "ggridges", "here", "lubridate", "readr", "ggthemes", 
-         "kableExtra", "gtsummary", "egg", "sf", "sp", "maps", "pheatmap", "spdep", "skimr"), library, character.only = TRUE)
+packages <- c("tidyverse", "ggridges", "here", "lubridate", "readr", "ggthemes", 
+              "kableExtra", "gtsummary", "egg", "sf", "sp", "maps", "pheatmap", "spdep", "skimr")
+
+invisible(lapply(packages, library, character.only = TRUE))
 ```
 Example to load own `.txt` data;
 
