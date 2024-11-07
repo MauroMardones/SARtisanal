@@ -75,21 +75,8 @@ library(SARtisanal)
 and load another important packages;
 
 ```{r libs, message=FALSE}
-library(tidyverse)
-library(ggridges)
-library(here)
-library(lubridate)
-library(readr)
-library(ggthemes)
-library(kableExtra)
-library(gtsummary)
-library(egg)
-library(ggthemes)
-library(sf)
-library(sp)
-library(maps)
-library(pheatmap)
-library(spdep) # autocorrelation test
+lapply(c("tidyverse", "ggridges", "here", "lubridate", "readr", "ggthemes", 
+         "kableExtra", "gtsummary", "egg", "sf", "sp", "maps", "pheatmap", "spdep", "skimr"), library, character.only = TRUE)
 ```
 Example to load own `.txt` data;
 

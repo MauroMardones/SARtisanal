@@ -1567,21 +1567,115 @@ calculations.</p>
 install_github(&quot;MauroMardones/SARtisanal&quot;)</code></pre>
 <pre class="r"><code>library(SARtisanal)</code></pre>
 <p>and load another important packages;</p>
-<pre class="r"><code>library(tidyverse)
-library(ggridges)
-library(here)
-library(lubridate)
-library(readr)
-library(ggthemes)
-library(kableExtra)
-library(gtsummary)
-library(egg)
-library(ggthemes)
-library(sf)
-library(sp)
-library(maps)
-library(pheatmap)
-library(spdep) # autocorrelation test</code></pre>
+<pre class="r"><code>lapply(c(&quot;tidyverse&quot;, &quot;ggridges&quot;, &quot;here&quot;, &quot;lubridate&quot;, &quot;readr&quot;, &quot;ggthemes&quot;, 
+         &quot;kableExtra&quot;, &quot;gtsummary&quot;, &quot;egg&quot;, &quot;sf&quot;, &quot;sp&quot;, &quot;maps&quot;, &quot;pheatmap&quot;, &quot;spdep&quot;, &quot;skimr&quot;), library, character.only = TRUE)</code></pre>
+<pre><code>## [[1]]
+##  [1] &quot;lubridate&quot;  &quot;forcats&quot;    &quot;stringr&quot;    &quot;dplyr&quot;      &quot;purrr&quot;     
+##  [6] &quot;readr&quot;      &quot;tidyr&quot;      &quot;tibble&quot;     &quot;ggplot2&quot;    &quot;tidyverse&quot; 
+## [11] &quot;SARtisanal&quot; &quot;stats&quot;      &quot;graphics&quot;   &quot;grDevices&quot;  &quot;utils&quot;     
+## [16] &quot;datasets&quot;   &quot;methods&quot;    &quot;base&quot;      
+## 
+## [[2]]
+##  [1] &quot;ggridges&quot;   &quot;lubridate&quot;  &quot;forcats&quot;    &quot;stringr&quot;    &quot;dplyr&quot;     
+##  [6] &quot;purrr&quot;      &quot;readr&quot;      &quot;tidyr&quot;      &quot;tibble&quot;     &quot;ggplot2&quot;   
+## [11] &quot;tidyverse&quot;  &quot;SARtisanal&quot; &quot;stats&quot;      &quot;graphics&quot;   &quot;grDevices&quot; 
+## [16] &quot;utils&quot;      &quot;datasets&quot;   &quot;methods&quot;    &quot;base&quot;      
+## 
+## [[3]]
+##  [1] &quot;here&quot;       &quot;ggridges&quot;   &quot;lubridate&quot;  &quot;forcats&quot;    &quot;stringr&quot;   
+##  [6] &quot;dplyr&quot;      &quot;purrr&quot;      &quot;readr&quot;      &quot;tidyr&quot;      &quot;tibble&quot;    
+## [11] &quot;ggplot2&quot;    &quot;tidyverse&quot;  &quot;SARtisanal&quot; &quot;stats&quot;      &quot;graphics&quot;  
+## [16] &quot;grDevices&quot;  &quot;utils&quot;      &quot;datasets&quot;   &quot;methods&quot;    &quot;base&quot;      
+## 
+## [[4]]
+##  [1] &quot;here&quot;       &quot;ggridges&quot;   &quot;lubridate&quot;  &quot;forcats&quot;    &quot;stringr&quot;   
+##  [6] &quot;dplyr&quot;      &quot;purrr&quot;      &quot;readr&quot;      &quot;tidyr&quot;      &quot;tibble&quot;    
+## [11] &quot;ggplot2&quot;    &quot;tidyverse&quot;  &quot;SARtisanal&quot; &quot;stats&quot;      &quot;graphics&quot;  
+## [16] &quot;grDevices&quot;  &quot;utils&quot;      &quot;datasets&quot;   &quot;methods&quot;    &quot;base&quot;      
+## 
+## [[5]]
+##  [1] &quot;here&quot;       &quot;ggridges&quot;   &quot;lubridate&quot;  &quot;forcats&quot;    &quot;stringr&quot;   
+##  [6] &quot;dplyr&quot;      &quot;purrr&quot;      &quot;readr&quot;      &quot;tidyr&quot;      &quot;tibble&quot;    
+## [11] &quot;ggplot2&quot;    &quot;tidyverse&quot;  &quot;SARtisanal&quot; &quot;stats&quot;      &quot;graphics&quot;  
+## [16] &quot;grDevices&quot;  &quot;utils&quot;      &quot;datasets&quot;   &quot;methods&quot;    &quot;base&quot;      
+## 
+## [[6]]
+##  [1] &quot;ggthemes&quot;   &quot;here&quot;       &quot;ggridges&quot;   &quot;lubridate&quot;  &quot;forcats&quot;   
+##  [6] &quot;stringr&quot;    &quot;dplyr&quot;      &quot;purrr&quot;      &quot;readr&quot;      &quot;tidyr&quot;     
+## [11] &quot;tibble&quot;     &quot;ggplot2&quot;    &quot;tidyverse&quot;  &quot;SARtisanal&quot; &quot;stats&quot;     
+## [16] &quot;graphics&quot;   &quot;grDevices&quot;  &quot;utils&quot;      &quot;datasets&quot;   &quot;methods&quot;   
+## [21] &quot;base&quot;      
+## 
+## [[7]]
+##  [1] &quot;kableExtra&quot; &quot;ggthemes&quot;   &quot;here&quot;       &quot;ggridges&quot;   &quot;lubridate&quot; 
+##  [6] &quot;forcats&quot;    &quot;stringr&quot;    &quot;dplyr&quot;      &quot;purrr&quot;      &quot;readr&quot;     
+## [11] &quot;tidyr&quot;      &quot;tibble&quot;     &quot;ggplot2&quot;    &quot;tidyverse&quot;  &quot;SARtisanal&quot;
+## [16] &quot;stats&quot;      &quot;graphics&quot;   &quot;grDevices&quot;  &quot;utils&quot;      &quot;datasets&quot;  
+## [21] &quot;methods&quot;    &quot;base&quot;      
+## 
+## [[8]]
+##  [1] &quot;gtsummary&quot;  &quot;kableExtra&quot; &quot;ggthemes&quot;   &quot;here&quot;       &quot;ggridges&quot;  
+##  [6] &quot;lubridate&quot;  &quot;forcats&quot;    &quot;stringr&quot;    &quot;dplyr&quot;      &quot;purrr&quot;     
+## [11] &quot;readr&quot;      &quot;tidyr&quot;      &quot;tibble&quot;     &quot;ggplot2&quot;    &quot;tidyverse&quot; 
+## [16] &quot;SARtisanal&quot; &quot;stats&quot;      &quot;graphics&quot;   &quot;grDevices&quot;  &quot;utils&quot;     
+## [21] &quot;datasets&quot;   &quot;methods&quot;    &quot;base&quot;      
+## 
+## [[9]]
+##  [1] &quot;egg&quot;        &quot;gridExtra&quot;  &quot;gtsummary&quot;  &quot;kableExtra&quot; &quot;ggthemes&quot;  
+##  [6] &quot;here&quot;       &quot;ggridges&quot;   &quot;lubridate&quot;  &quot;forcats&quot;    &quot;stringr&quot;   
+## [11] &quot;dplyr&quot;      &quot;purrr&quot;      &quot;readr&quot;      &quot;tidyr&quot;      &quot;tibble&quot;    
+## [16] &quot;ggplot2&quot;    &quot;tidyverse&quot;  &quot;SARtisanal&quot; &quot;stats&quot;      &quot;graphics&quot;  
+## [21] &quot;grDevices&quot;  &quot;utils&quot;      &quot;datasets&quot;   &quot;methods&quot;    &quot;base&quot;      
+## 
+## [[10]]
+##  [1] &quot;sf&quot;         &quot;egg&quot;        &quot;gridExtra&quot;  &quot;gtsummary&quot;  &quot;kableExtra&quot;
+##  [6] &quot;ggthemes&quot;   &quot;here&quot;       &quot;ggridges&quot;   &quot;lubridate&quot;  &quot;forcats&quot;   
+## [11] &quot;stringr&quot;    &quot;dplyr&quot;      &quot;purrr&quot;      &quot;readr&quot;      &quot;tidyr&quot;     
+## [16] &quot;tibble&quot;     &quot;ggplot2&quot;    &quot;tidyverse&quot;  &quot;SARtisanal&quot; &quot;stats&quot;     
+## [21] &quot;graphics&quot;   &quot;grDevices&quot;  &quot;utils&quot;      &quot;datasets&quot;   &quot;methods&quot;   
+## [26] &quot;base&quot;      
+## 
+## [[11]]
+##  [1] &quot;sp&quot;         &quot;sf&quot;         &quot;egg&quot;        &quot;gridExtra&quot;  &quot;gtsummary&quot; 
+##  [6] &quot;kableExtra&quot; &quot;ggthemes&quot;   &quot;here&quot;       &quot;ggridges&quot;   &quot;lubridate&quot; 
+## [11] &quot;forcats&quot;    &quot;stringr&quot;    &quot;dplyr&quot;      &quot;purrr&quot;      &quot;readr&quot;     
+## [16] &quot;tidyr&quot;      &quot;tibble&quot;     &quot;ggplot2&quot;    &quot;tidyverse&quot;  &quot;SARtisanal&quot;
+## [21] &quot;stats&quot;      &quot;graphics&quot;   &quot;grDevices&quot;  &quot;utils&quot;      &quot;datasets&quot;  
+## [26] &quot;methods&quot;    &quot;base&quot;      
+## 
+## [[12]]
+##  [1] &quot;maps&quot;       &quot;sp&quot;         &quot;sf&quot;         &quot;egg&quot;        &quot;gridExtra&quot; 
+##  [6] &quot;gtsummary&quot;  &quot;kableExtra&quot; &quot;ggthemes&quot;   &quot;here&quot;       &quot;ggridges&quot;  
+## [11] &quot;lubridate&quot;  &quot;forcats&quot;    &quot;stringr&quot;    &quot;dplyr&quot;      &quot;purrr&quot;     
+## [16] &quot;readr&quot;      &quot;tidyr&quot;      &quot;tibble&quot;     &quot;ggplot2&quot;    &quot;tidyverse&quot; 
+## [21] &quot;SARtisanal&quot; &quot;stats&quot;      &quot;graphics&quot;   &quot;grDevices&quot;  &quot;utils&quot;     
+## [26] &quot;datasets&quot;   &quot;methods&quot;    &quot;base&quot;      
+## 
+## [[13]]
+##  [1] &quot;pheatmap&quot;   &quot;maps&quot;       &quot;sp&quot;         &quot;sf&quot;         &quot;egg&quot;       
+##  [6] &quot;gridExtra&quot;  &quot;gtsummary&quot;  &quot;kableExtra&quot; &quot;ggthemes&quot;   &quot;here&quot;      
+## [11] &quot;ggridges&quot;   &quot;lubridate&quot;  &quot;forcats&quot;    &quot;stringr&quot;    &quot;dplyr&quot;     
+## [16] &quot;purrr&quot;      &quot;readr&quot;      &quot;tidyr&quot;      &quot;tibble&quot;     &quot;ggplot2&quot;   
+## [21] &quot;tidyverse&quot;  &quot;SARtisanal&quot; &quot;stats&quot;      &quot;graphics&quot;   &quot;grDevices&quot; 
+## [26] &quot;utils&quot;      &quot;datasets&quot;   &quot;methods&quot;    &quot;base&quot;      
+## 
+## [[14]]
+##  [1] &quot;spdep&quot;      &quot;spData&quot;     &quot;pheatmap&quot;   &quot;maps&quot;       &quot;sp&quot;        
+##  [6] &quot;sf&quot;         &quot;egg&quot;        &quot;gridExtra&quot;  &quot;gtsummary&quot;  &quot;kableExtra&quot;
+## [11] &quot;ggthemes&quot;   &quot;here&quot;       &quot;ggridges&quot;   &quot;lubridate&quot;  &quot;forcats&quot;   
+## [16] &quot;stringr&quot;    &quot;dplyr&quot;      &quot;purrr&quot;      &quot;readr&quot;      &quot;tidyr&quot;     
+## [21] &quot;tibble&quot;     &quot;ggplot2&quot;    &quot;tidyverse&quot;  &quot;SARtisanal&quot; &quot;stats&quot;     
+## [26] &quot;graphics&quot;   &quot;grDevices&quot;  &quot;utils&quot;      &quot;datasets&quot;   &quot;methods&quot;   
+## [31] &quot;base&quot;      
+## 
+## [[15]]
+##  [1] &quot;skimr&quot;      &quot;spdep&quot;      &quot;spData&quot;     &quot;pheatmap&quot;   &quot;maps&quot;      
+##  [6] &quot;sp&quot;         &quot;sf&quot;         &quot;egg&quot;        &quot;gridExtra&quot;  &quot;gtsummary&quot; 
+## [11] &quot;kableExtra&quot; &quot;ggthemes&quot;   &quot;here&quot;       &quot;ggridges&quot;   &quot;lubridate&quot; 
+## [16] &quot;forcats&quot;    &quot;stringr&quot;    &quot;dplyr&quot;      &quot;purrr&quot;      &quot;readr&quot;     
+## [21] &quot;tidyr&quot;      &quot;tibble&quot;     &quot;ggplot2&quot;    &quot;tidyverse&quot;  &quot;SARtisanal&quot;
+## [26] &quot;stats&quot;      &quot;graphics&quot;   &quot;grDevices&quot;  &quot;utils&quot;      &quot;datasets&quot;  
+## [31] &quot;methods&quot;    &quot;base&quot;</code></pre>
 <p>Example to load own <code>.txt</code> data;</p>
 <pre class="r"><code>archivos &lt;- c(&quot;Draga_01.txt&quot;, 
               &quot;Draga_02.txt&quot;, 
