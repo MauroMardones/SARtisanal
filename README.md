@@ -4,6 +4,8 @@
 # SARtisanal package
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/MauroMardones/SARtisanal/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MauroMardones/SARtisanal/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The objective of the `SARtisanal` package is to facilitate a series of
