@@ -2,36 +2,35 @@
 % Please edit documentation in R/read_artdata.R
 \name{read_artdata}
 \alias{read_artdata}
-\title{Reads and combines multiple data files, retaining the source of each file}
+\title{Reads and combines multiple .txt files, retaining the source of each file}
 \usage{
 read_artdata(archivos, carpeta, sep = ",", header = TRUE)
 }
 \arguments{
-\item{archivos}{Un vector de nombres de archivos (por ejemplo, "archivo1.txt", "archivo2.txt", ...).}
+\item{archivos}{A vector of .txt file names (e.g., "archivo1.txt", "archivo2.txt", ...).}
 
-\item{carpeta}{La ruta de la carpeta donde se encuentran los archivos.}
+\item{carpeta}{The folder path where the files are located.}
 
-\item{sep}{El separador de los archivos (por ejemplo, \code{","} para coma, \code{";"} para punto y coma, o \code{" "} para espacio).
-Este separador se aplica a todos los archivos.}
+\item{sep}{The separator for .txt files (e.g., \code{","} for comma, \code{";"} for semicolon, or \code{" "} for space).}
 
-\item{header}{Lógico, TRUE si los archivos tienen encabezado.}
+\item{header}{Logical, TRUE if the files have a header.}
 }
 \value{
-Un data frame con todos los archivos combinados, incluyendo una columna "archivo_origen" que indica
-el archivo de origen para cada fila.
+A data frame with all files combined, including a column "archivo_origen" that indicates
+the source file for each row.
 }
 \description{
-This function reads multiple text files located in a specific folder, adds a column
+This function reads multiple .txt files located in a specific folder, adds a column
 indicating the source file, and then combines them into a single data frame.
 }
 \examples{
-archivos <- c("Draga_01.txt", "Draga_02.txt", "Draga_03.txt")
+# Example for reading multiple .txt files
+archivos_txt <- c("archivo1.txt", "archivo2.txt", "archivo3.txt")
 carpeta <- "ruta/a/tu/carpeta"
-# Verificar que todos los archivos existen antes de ejecutar la función
-if (all(file.exists(file.path(carpeta, archivos)))) {
-  datos_combinados <- read_artdata(archivos, carpeta, sep = ",")
-  print(datos_combinados)
+if (all(file.exists(file.path(carpeta, archivos_txt)))) {
+  datos_txt <- read_artdata_txt(archivos_txt, carpeta, sep = "\t", header = TRUE)
+  print(datos_txt)
 } else {
-  warning("Uno o más archivos no se encuentran en la carpeta especificada.")
+  warning("One or more .txt files are not found in the specified folder.")
 }
 }

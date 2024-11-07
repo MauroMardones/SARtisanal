@@ -2,7 +2,7 @@
 title: "User Guide **SARtisanal** package"
 subtitle: "Methodology used to calculate of Swept Area Ratio (SAR) in artisanal fisheries context"
 author: "Mardones. M., Delgado, M., ..."
-date:  "06 November, 2024"
+date:  "07 November, 2024"
 bibliography: SARtisanal.bib
 csl: apa.csl
 link-citations: yes
@@ -32,15 +32,15 @@ output:
 
 Here is a brief overview of each function in the `SARtisanal` package [@Mardones2024]:
 
-- `read_artdata()`: Reads and merges multiple files into a single data frame, streamlining data integration from multiple sources.
+- `read_artdata()`: Multiple .txt files from a specified folder are read and combined into a single data frame, with each row tagged by its source file name in a new column. This function allows custom separators, headers, and returns a unified data frame for easy analysis across multiple files.
+
+- `read_artdata_2()`: Reads and combines multiple .csv files, supporting custom separators and headers. It also includes a source file column to retain the origin of each row, which is ideal for analyzing data spread across several .csv files with non-standard delimiters.
 
 - `remo_dup()`: remove duplicates in databases.
 
 - `distart()`: Computes distances between consecutive points in a dataset, assisting in estimating fishing vessel movement and potential coverage.
 
-- `process_art_effort()`: Processes artisanal fishing effort data by assigning coordinates to grid cells, calculating the mean swept area (SA) for each cell, and returning a data frame with the spatial distribution of fishing effort.
-
-- `process_art_effort()`: Calculates effort (*SA*) and the Swept Area Ratio (*SAR*) by dividing fishing effort data by cell area, indicating the impact intensity across different areas.
+- `process_art_effort()`: Processes artisanal fishing effort data by assigning coordinates to grid cells, calculating the mean swept area (*SA*) for each cell, and returning a data frame with the spatial distribution of fishing effort. Also, calculate the Swept Area Ratio (*SAR*) by dividing fishing effort data by cell area, indicating the impact intensity across different areas.
 
 Each function supports artisanal fishery data analysis, focusing on measuring and visualizing fishing impacts using spatial grid-based calculations.
 
@@ -80,7 +80,7 @@ library(maps)
 library(pheatmap)
 library(spdep) # autocorrelation test
 ```
-Example to load own data;
+Example to load own `.txt` data;
 
 
 ``` r
@@ -95,6 +95,23 @@ if (all(file.exists(file.path(carpeta, archivos)))) {
   print(datos_combinados)
 } else {
   warning("One or more files are not found in the specified folder.")
+}
+```
+or loading `.csv`files;
+
+
+``` r
+archivos_csv <- c("archivo1.csv", 
+                  "archivo2.csv", 
+                  "archivo3.csv")
+carpeta <- "your/path"
+
+# Read and join all files
+if (all(file.exists(file.path(carpeta, archivos_csv)))) {
+   datos_csv <- read_artdata_csv_2(archivos_csv, carpeta, sep = ",", header = TRUE)
+   print(datos_csv)
+} else {
+ warning("One or more .csv files are not found in the specified folder.")
 }
 ```
 
