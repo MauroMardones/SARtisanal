@@ -40,6 +40,6 @@ install_github("MauroMardones/SARtisanal")
 
 ## User Guide `SARtisanal`
 
-User guide to use and apply `SARtisanal`packages and functions could be
-found in this repo; [SARtisanal
+User guide to apply `SARtisanal`packages and functions could be found in
+this repo; [SARtisanal
 package](https://mauromardones.github.io/SARtisanal/)
