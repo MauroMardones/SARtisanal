@@ -1548,13 +1548,17 @@ delimiters.</p></li>
 <li><p><code>distart()</code>: Computes distances between consecutive
 points in a dataset, assisting in estimating fishing vessel movement and
 potential coverage.</p></li>
+<li><p><code>SAbarrida()</code>: This function calculates the Swept Area
+(<em>SA</em>) by multiplying the distance traveled by the fishing gear
+and its width. It returns a vector of the calculated swept areas based
+on the input vectors for distance and gear width.</p></li>
 <li><p><code>process_art_effort()</code>: Processes artisanal fishing
 effort data by assigning coordinates to grid cells, calculating the mean
 swept area (<em>SA</em>) for each cell, and returning a data frame with
 the spatial distribution of fishing effort. Also, calculate the Swept
 Area Ratio (<em>SAR</em>) by dividing fishing effort data by cell area,
 indicating the impact intensity across different areas.</p></li>
-<li><p><code>count_art_trawl89</code> Processes artisanal fishing effort
+<li><p><code>count_art_trawl()</code> Processes artisanal fishing effort
 data by creating a spatial grid and counting the number of vessel
 passages through each grid cell. It filters the data, joint into the
 grid, and performs a spatial join to calculate the number of times
