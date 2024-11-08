@@ -1,35 +1,31 @@
 #' Process Artisanal Fishing Effort Data by Grid Cell
 #'
 #' This function processes artisanal fishing effort data by grid cell, including filtering data,
-#' creating a spatial grid, calculating the average swept area (SA) per grid cell, and determining
-#' each cell's area.
-#'
+#' creating a spatial grid, and counting the number of times vessels pass through each cell.
 #'
 #' @param data A data frame containing artisanal fishing effort data.
 #' @param lon_col Character. The name of the longitude column in `data` (default is `"N_LONGITUD"`).
 #' @param lat_col Character. The name of the latitude column in `data` (default is `"N_LATITUD"`).
-#' @param sa_col Character. The name of the swept area (SA) column in `data` (default is `"SA"`).
 #' @param cell_size Numeric. The size of each cell in degrees for the grid (default is 0.02).
-#' @return A spatial data frame (`sf`) with grid cells, average SA values, cell area, and SAR levels.
+#' @return A spatial data frame (`sf`) with grid cells and the count of vessel passages per cell.
 #' @export
 #' @import dplyr sf
 #' @examples
 #' # Crear un conjunto de datos de ejemplo
 #' data <- data.frame(
-#'   N_LONGITUD = c(-71.3, -71.5),
-#'   N_LATITUD = c(-33.5, -33.6),
-#'   SA = c(0.1, 0.3)
+#'   N_LONGITUD = c(-71.3, -71.5, -71.4, -71.3),
+#'   N_LATITUD = c(-33.5, -33.6, -33.5, -33.6)
 #' )
 #'
 #' # Aplicar la función
-#' processed_data <- process_art_effort(
-#'   data, lon_col = "N_LONGITUD", lat_col = "N_LATITUD", sa_col = "SA", cell_size = 0.02
+#' processed_data <- count_art_trawl(
+#'   data, lon_col = "N_LONGITUD", lat_col = "N_LATITUD", cell_size = 0.02
 #' )
-process_art_effort <- function(data, lon_col = "N_LONGITUD", lat_col = "N_LATITUD", sa_col = "SA", cell_size = 0.02) {
+count_art_trawl <- function(data, lon_col = "N_LONGITUD", lat_col = "N_LATITUD", cell_size = 0.02) {
 
   # 1. Filter and validate data using the dynamic column names
   data_valid <- data %>%
-    filter(!is.na(.data[[lon_col]]) & !is.na(.data[[lat_col]]) & !is.na(.data[[sa_col]]))
+    filter(!is.na(.data[[lon_col]]) & !is.na(.data[[lat_col]]))
 
   # 2. Define study area boundaries
   min_long <- min(data_valid[[lon_col]], na.rm = TRUE)
@@ -53,26 +49,23 @@ process_art_effort <- function(data, lon_col = "N_LONGITUD", lat_col = "N_LATITU
     stop("Both data_sf and grid must be spatial (sf) objects for spatial join.")
   }
 
-  avg_SA_per_cell <- st_join(data_sf, grid) %>%
+  # 5. Count the number of vessel passages per cell
+  passages_per_cell <- st_join(data_sf, grid) %>%
     group_by(cellid) %>%
-    summarize(promedio_SA = mean(.data[[sa_col]], na.rm = TRUE), .groups = "drop") %>%
-    distinct(cellid, .keep_all = TRUE)  %>%
+    summarize(count_passages = n(), .groups = "drop") %>%
+    distinct(cellid, .keep_all = TRUE) %>%
     st_as_sf()
 
-  # 5. Check for missing data after join
-  if (nrow(avg_SA_per_cell) == 0) {
+  # 6. Check for missing data after join
+  if (nrow(passages_per_cell) == 0) {
     stop("No data available for plotting. Verify data join.")
   }
 
-  # 6. Join grid geometry with average SA data, adding cell area and SAR levels
+  # 7. Join grid geometry with passages count
   grid <- grid %>%
-    mutate(cellid = as.integer(cellid),
-           area_celda = as.numeric(st_area(.)))  %>%
-    st_join(avg_SA_per_cell) %>%
-    mutate(SAR = (promedio_SA / area_celda) * 100)
+    mutate(cellid = as.integer(cellid)) %>%
+    st_join(passages_per_cell)
 
-  # 7. Return the processed spatial data frame
+  # 8. Return the processed spatial data frame with passage counts
   return(grid)
 }
-
-

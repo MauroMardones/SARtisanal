@@ -4,31 +4,41 @@
 \alias{distart}
 \title{Calculates the Euclidean distance in meters using the Haversine formula}
 \usage{
-distart(lat1, lon1, lat2, lon2)
+distart(data, lat_col, lon_col, fecha_col, hora_col, barco_col)
 }
 \arguments{
-\item{lat1}{Latitude of point 1 (in degrees).}
+\item{data}{A data frame containing location and time data for the vessels.}
 
-\item{lon1}{Longitude of point 1 (in degrees).}
+\item{lat_col}{Name of the latitude column (in decimal degrees).}
 
-\item{lat2}{Latitude of point 2 (in degrees).}
+\item{lon_col}{Name of the longitude column (in decimal degrees).}
 
-\item{lon2}{Longitude of point 2 (in degrees).}
+\item{fecha_col}{Name of the column containing the event date.}
+
+\item{hora_col}{Name of the column containing the event time.}
+
+\item{barco_col}{Name of the column identifying the vessel.}
 }
 \value{
-The calculated distance in meters.
+A data frame that includes an additional column called \code{distance}, with the distance in meters between consecutive points of the same vessel on the same date. If there is a change of vessel or date, the value is \code{NA}.
 }
 \description{
-This function computes the distance between two geographical points specified by
-their latitude and longitude coordinates using the Haversine formula, which accounts
-for the curvature of the Earth.
+Calculate Distance Between Consecutive Points of a Vessel
+}
+\details{
+This function calculates the distance between consecutive geographic points of the same vessel in a dataset,
+using the Haversine formula to measure the distance in meters. It assigns \code{NA} when there is a change in date or vessel.
 }
 \examples{
-# Example usage:
-# Distance between two points: (lat1, lon1) and (lat2, lon2)
-distancia <- distart(
-  40.7128, -74.0060,  # New York coordinates
-  34.0522, -118.2437  # Los Angeles coordinates
+# Example usage with a data frame named `artdata`
+artdata_with_distances <- distart(
+  data = artdata,
+  lat_col = "N_LATITUD",
+  lon_col = "N_LONGITUD",
+  fecha_col = "FECHA",
+  hora_col = "HORA",
+  barco_col = "MATRICULA"
 )
-print(distancia)  # Distance between New York and Los Angeles
+head(artdata_with_distances)
+
 }

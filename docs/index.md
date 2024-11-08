@@ -2,7 +2,7 @@
 title: "User Guide **SARtisanal** package"
 subtitle: "Methodology used to calculate of Swept Area Ratio (SAR) in artisanal fisheries context"
 author: "Mardones. M., Delgado, M., ..."
-date:  "07 November, 2024"
+date:  "08 November, 2024"
 bibliography: SARtisanal.bib
 csl: apa.csl
 link-citations: yes
@@ -41,6 +41,8 @@ Here is a brief overview of each function in the `SARtisanal` package [@Mardones
 - `distart()`: Computes distances between consecutive points in a dataset, assisting in estimating fishing vessel movement and potential coverage.
 
 - `process_art_effort()`: Processes artisanal fishing effort data by assigning coordinates to grid cells, calculating the mean swept area (*SA*) for each cell, and returning a data frame with the spatial distribution of fishing effort. Also, calculate the Swept Area Ratio (*SAR*) by dividing fishing effort data by cell area, indicating the impact intensity across different areas.
+
+- `count_art_trawl89` Processes artisanal fishing effort data by creating a spatial grid and counting the number of vessel passages through each grid cell. It filters the data, joint into the grid, and performs a spatial join to calculate the number of times vessels pass through each cell, returning a spatial data frame with the results.
 
 Each function supports artisanal fishery data analysis, focusing on measuring and visualizing fishing impacts using spatial grid-based calculations.
 
@@ -170,21 +172,18 @@ dim(artdata2)
 
 3. Calculate distance
 
-Now, first analytical process its calculate the distance between trawls. We calculate distance row by row, assuming a conntuniun register of fishery activity. To do that, we use the `distar` function using `mapply`;
+Now, first analytical process its calculate the distance between trawls. We calculate distance row by row, assuming a conntuniun register of fishery activity. To do that, we use the `distart`;
 
 
 ``` r
-# Calcular distancias entre filas consecutivas
-distancia <- mapply(distart,
-   artdata2$N_LATITUD,
-   artdata2$N_LONGITUD,
-   lag(artdata2$N_LATITUD),
-   lag(artdata2$N_LONGITUD)
-   ) 
-  
-artdata2 <- artdata2 %>%
-  mutate(distancia = distancia) %>% 
-  mutate_if(is.numeric, round, 3)
+artdata_con_distancias <- distart(
+   data = artdata2,
+   lat_col = "N_LATITUD",
+   lon_col = "N_LONGITUD",
+   fecha_col = "FECHA",
+   hora_col = "HORA",
+   barco_col = "FK_BUQUE"
+)
 ```
 
 Visualizing new data with `skim`;
@@ -201,11 +200,11 @@ Table: Data summary
 |:------------------------|:--------|
 |Name                     |artdata2 |
 |Number of rows           |41663    |
-|Number of columns        |22       |
+|Number of columns        |21       |
 |_______________________  |         |
 |Column type frequency:   |         |
 |character                |6        |
-|numeric                  |16       |
+|numeric                  |15       |
 |________________________ |         |
 |Group variables          |None     |
 
@@ -230,9 +229,9 @@ Table: Data summary
 |FK_BUQUE      |         0|             1|   24574.71|  2951.43|    9883.00|   24204.00|   25171.00|   25978.00|   27201.00|▁▁▁▂▇ |
 |FK_TIPO_F     |         0|             1|       3.00|     0.00|       3.00|       3.00|       3.00|       3.00|       3.00|▁▁▇▁▁ |
 |N_LONGITUD    |         0|             1|      -6.84|     0.26|      -7.41|      -6.87|      -6.82|      -6.69|      -6.34|▃▁▇▆▂ |
-|N_LATITUD     |         0|             1|      37.09|     0.10|      36.75|      37.06|      37.11|      37.12|      37.23|▁▁▁▇▃ |
+|N_LATITUD     |         0|             1|      37.09|     0.10|      36.75|      37.06|      37.11|      37.13|      37.23|▁▁▁▇▃ |
 |N_X           |         0|             1|  158833.07| 23071.89|  107650.37|  155969.19|  160927.12|  171739.75|  202389.14|▃▁▇▆▂ |
-|N_Y           |         0|             1| 4111560.72| 11492.26| 4072521.42| 4108525.81| 4114135.27| 4115954.07| 4128613.72|▁▁▂▇▃ |
+|N_Y           |         0|             1| 4111560.72| 11492.26| 4072521.42| 4108525.81| 4114135.27| 4115954.07| 4128613.73|▁▁▂▇▃ |
 |N_VELOCIDAD   |         0|             1|       1.66|     0.89|       0.10|       1.08|       1.92|       2.22|       5.00|▆▇▇▁▁ |
 |N_RUMBO       |         0|             1|     180.52|   101.10|       0.00|     102.62|     157.18|     284.67|     359.99|▅▇▅▃▆ |
 |N_SATELITES   |         0|             1|       9.05|     1.14|       4.00|       8.00|       9.00|      10.00|      12.00|▁▁▂▇▁ |
@@ -241,7 +240,6 @@ Table: Data summary
 |FK_ACTIVI     |         0|             1|       3.39|     0.89|       1.00|       3.00|       4.00|       4.00|       4.00|▁▁▁▅▇ |
 |FK_ESTADO     |         0|             1|       4.83|     0.67|       1.00|       5.00|       5.00|       5.00|       5.00|▁▁▁▁▇ |
 |FK_MODAL      |         0|             1|       1.79|     1.51|       0.00|       0.00|       3.00|       3.00|       4.00|▆▁▁▇▁ |
-|distancia     |         1|             1|    1127.35|  4130.41|       0.00|     101.82|     240.32|     608.74|  105605.95|▇▁▁▁▁ |
 
 # Calculate Distance between trawls.
 
@@ -254,7 +252,7 @@ We use different width trawl. To do this we use `SAbarrida` function;
 
 
 ``` r
-artdataSA <- artdata2 %>% 
+artdataSA <- artdata_con_distancias %>% 
   mutate(
     SA = SAbarrida(distancia, ancho = 2.5),  
     SA2 = SAbarrida(distancia, ancho = 3)  
@@ -264,7 +262,7 @@ summary(artdataSA$SA)
 
 ```
 ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA's 
-##      0.0    254.5    600.8   2818.4   1521.8 264014.9        1
+##      0.0    174.8    354.7    696.4    454.0 137110.5      709
 ```
 
 ``` r
@@ -273,8 +271,9 @@ summary(artdataSA$SA2)
 
 ```
 ##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA's 
-##      0.0    305.4    721.0   3382.0   1826.2 316817.8        1
+##      0.0    209.8    425.6    835.6    544.8 164532.6      709
 ```
+
 
 
 # Processing and Visualizing Fishing Effort Data
@@ -286,7 +285,7 @@ The `procces_art_effort` function have the next component of analysis;
 
 2. Define Study Area Boundaries: It calculates the minimum and maximum values for longitude and latitude to define the geographical boundaries of the study area.
 
-3. Generate Spatial Grid: Using these boundaries, a spatial grid is created where each cell represents a 0.02° x 0.02° area. Each cell is uniquely identified by a `cellid`.
+3. Generate Spatial Grid: Using these boundaries, a spatial grid is created where each cell represents a 0.02^0 x 0.02^0 area. Each cell is uniquely identified by a `cellid`.
 
 4. Spatial Data Transformation and Aggregation: The data is converted to a spatial format (`sf`) to align with the grid. Each data point is assigned to its respective grid cell, where the mean SA for each cell is calculated, representing the average fishing effort in that location.
 
@@ -365,15 +364,16 @@ p_sar <- ggplot() +
   geom_sf(data = processed_data %>%
             mutate(
            SAR_niveles = cut(SAR,
-                             breaks = c(0, 0.2, 0.4, 0.6, 0.8, Inf),
-                             labels = c("0-0.2", "0.2-0.4", "0.4-0.6", "0.6-0.8", ">0.8"),
+                            breaks = c(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, Inf),
+                            labels = c("0-0.05", "0.05-0.1", "0.1-0.15", "0.15-0.2", "0.2-0.25", 
+                                       "0.25-0.3", "0.3-0.35", "0.35-0.4", "0.4-0.45", "0.45-0.5", ">0.5"),
                              include.lowest = TRUE)) %>% 
     drop_na(SAR_niveles), 
           aes(fill = SAR_niveles), color = "grey") +
  
-  scale_fill_manual(values = c('#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026'),
+  scale_fill_brewer(
                     name = "SAR") +
-  labs(title = "Mapa de Calor Espacial del SAR") +
+  labs(title = "Distribution SAR") +
   coord_sf(xlim = c(-7.6, -6.3), 
            ylim = c(36.65, 37.3)) + 
   theme_few() +
@@ -383,6 +383,45 @@ p_sar
 ```
 
 <img src="index_files/figure-html/unnamed-chunk-11-1.jpeg" style="display: block; margin: auto;" />
+
+# Count Vessel trawl 
+
+
+
+
+``` r
+trawl_count <- count_art_trawl(artdataSA, 
+                               lon_col = "N_LONGITUD", 
+                               lat_col = "N_LATITUD",
+                               cell_size = 0.02)
+```
+Map
+
+
+``` r
+p_count <- ggplot() +
+  geom_sf(data = trawl_count %>%
+            mutate(
+           count_passages_leves = cut(count_passages,
+                           breaks <- c(0, 10, 200, 700, 5000),
+                           labels <- c("1-9", "10-200", "201-700", "701-5000"),
+                             include.lowest = TRUE)) %>% 
+    drop_na(count_passages_leves), 
+          aes(fill = count_passages_leves), color = "grey") +
+ 
+  scale_fill_brewer(palette = 2,
+                    name = "Count Vessel passages") +
+  labs(title = "Count trawl by Cell") +
+  coord_sf(xlim = c(-7.6, -6.3), 
+           ylim = c(36.65, 37.3)) + 
+  theme_few() +
+  theme(legend.position = "right")  
+
+p_count
+```
+
+<img src="index_files/figure-html/unnamed-chunk-13-1.jpeg" style="display: block; margin: auto;" />
+
 
 # Another things
 
@@ -412,7 +451,7 @@ pheatmap(cor_matrix,
          main = "Correlation Heatmap")
 ```
 
-<img src="index_files/figure-html/unnamed-chunk-13-1.jpeg" style="display: block; margin: auto;" />
+<img src="index_files/figure-html/unnamed-chunk-15-1.jpeg" style="display: block; margin: auto;" />
 
 Now we calculate Spatial Autocorrelation Analysis of Swept Area Ratio (SAR) using *spdep* package [@Bivand2022]. 
 
@@ -442,11 +481,11 @@ moran_test
 ## data:  processed_data3$SAR  
 ## weights: weights    
 ## 
-## Moran I statistic standard deviate = 6.6618, p-value = 1.353e-11
+## Moran I statistic standard deviate = 25.009, p-value < 2.2e-16
 ## alternative hypothesis: greater
 ## sample estimates:
 ## Moran I statistic       Expectation          Variance 
-##      0.0827490652     -0.0038759690      0.0001690861
+##      0.3120900950     -0.0040485830      0.0001597952
 ```
 
 The Moran I test evaluates the presence of spatial autocorrelation in this case in the SAR (Swept Area Ratio) per cell. 
