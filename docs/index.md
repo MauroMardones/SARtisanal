@@ -412,7 +412,7 @@ p_count <- ggplot() +
           aes(fill = count_passages_leves), color = "grey") +
  
   scale_fill_brewer(palette = 2,
-                    name = "Count Vessel passages") +
+                    name = "Count Trawl") +
   labs(title = "Count trawl by Cell") +
   coord_sf(xlim = c(-7.6, -6.3), 
            ylim = c(36.65, 37.3)) + 

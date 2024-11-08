@@ -262,7 +262,7 @@ This code provides a quantitative measure (`SAR`) that indicates the fishing eff
 
 Finally, we have a map with spatial distribution of `SAR`
 
-```{r}
+```{r  fig.height=7, fig.width=8}
 p_sar <- ggplot() +
   geom_sf(data = processed_data %>%
             mutate(
@@ -297,7 +297,7 @@ trawl_count <- count_art_trawl(artdataSA,
 ```
 Map
 
-```{r}
+```{r fig.height=7, fig.width=8}
 p_count <- ggplot() +
   geom_sf(data = trawl_count %>%
             mutate(
@@ -309,7 +309,7 @@ p_count <- ggplot() +
           aes(fill = count_passages_leves), color = "grey") +
  
   scale_fill_brewer(palette = 2,
-                    name = "Count Vessel passages") +
+                    name = "Count Trawl") +
   labs(title = "Count trawl by Cell") +
   coord_sf(xlim = c(-7.6, -6.3), 
            ylim = c(36.65, 37.3)) + 
