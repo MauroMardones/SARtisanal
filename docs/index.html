@@ -1523,7 +1523,7 @@ package</h1>
 <h3 class="subtitle">Methodology used to calculate of Swept Area Ratio
 (SAR) in artisanal fisheries context</h3>
 <h4 class="author">Mardones. M., Delgado, M., …</h4>
-<h4 class="date">08 November, 2024</h4>
+<h4 class="date">21 November, 2024</h4>
 
 </div>
 
@@ -1658,7 +1658,36 @@ dim(artdata2)</code></pre>
 </ol>
 <p>Now, first analytical process its calculate the distance between
 trawls. We calculate distance row by row, assuming a conntuniun register
-of fishery activity. To do that, we use the <code>distart</code>;</p>
+of fishery activity. We calculate the distance with haversine formula.
+The Haversine formula calculates the great-circle distance between two
+points on the surface of a sphere (such as the Earth) using their
+geographic coordinates (latitude and longitude). The formula is:</p>
+<p><span class="math display">\[
+a = \sin^2\left(\frac{\Delta \text{lat}}{2}\right) + \cos(\text{lat}_1)
+\cdot \cos(\text{lat}_2) \cdot \sin^2\left(\frac{\Delta
+\text{lon}}{2}\right)
+\]</span></p>
+<p><span class="math display">\[
+c = 2 \cdot \arctan2\left(\sqrt{a}, \sqrt{1 - a}\right)
+\]</span></p>
+<p><span class="math display">\[
+\text{distance} = R \cdot c
+\]</span></p>
+<p>Where: - <span class="math inline">\(R\)</span> is the radius of the
+Earth (approximately 6371 km or 6371000 meters). - <span class="math inline">\(\Delta \text{lat}\)</span> is the difference in
+latitude between the points, in radians. - <span class="math inline">\(\Delta \text{lon}\)</span> is the difference in
+longitude between the points, in radians.</p>
+<p>and his implementation in <code>distar.R</code> function is;</p>
+<pre class="r"><code>haversine &lt;- function(lat1, lon1, lat2, lon2) {
+  R &lt;- 6371000  # Radius of the Earth in meters
+  lat1_rad &lt;- lat1 * pi / 180
+  lon1_rad &lt;- lon1 * pi / 180
+  lat2_rad &lt;- lat2 * pi / 180
+  lon2_rad &lt;- lon2 * pi / 180
+  
+  dlat &lt;- lat2_rad - lat1_rad
+  d</code></pre>
+<p>To do that, we use the <code>distart</code>;</p>
 <pre class="r"><code>artdata_con_distancias &lt;- distart(
    data = artdata2,
    lat_col = &quot;N_LATITUD&quot;,

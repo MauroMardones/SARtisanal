@@ -2,7 +2,7 @@
 title: "User Guide **SARtisanal** package"
 subtitle: "Methodology used to calculate of Swept Area Ratio (SAR) in artisanal fisheries context"
 author: "Mardones. M., Delgado, M., ..."
-date:  "08 November, 2024"
+date:  "21 November, 2024"
 bibliography: SARtisanal.bib
 csl: apa.csl
 link-citations: yes
@@ -174,7 +174,40 @@ dim(artdata2)
 
 3. Calculate distance
 
-Now, first analytical process its calculate the distance between trawls. We calculate distance row by row, assuming a conntuniun register of fishery activity. To do that, we use the `distart`;
+Now, first analytical process its calculate the distance between trawls. We calculate distance row by row, assuming a conntuniun register of fishery activity. We calculate the distance with haversine formula. The Haversine formula calculates the great-circle distance between two points on the surface of a sphere (such as the Earth) using their geographic coordinates (latitude and longitude). The formula is:
+
+\[
+a = \sin^2\left(\frac{\Delta \text{lat}}{2}\right) + \cos(\text{lat}_1) \cdot \cos(\text{lat}_2) \cdot \sin^2\left(\frac{\Delta \text{lon}}{2}\right)
+\]
+
+\[
+c = 2 \cdot \arctan2\left(\sqrt{a}, \sqrt{1 - a}\right)
+\]
+
+\[
+\text{distance} = R \cdot c
+\]
+
+Where:
+- \( R \) is the radius of the Earth (approximately 6371 km or 6371000 meters).
+- \( \Delta \text{lat} \) is the difference in latitude between the points, in radians.
+- \( \Delta \text{lon} \) is the difference in longitude between the points, in radians.
+
+and his implementation in `distar.R` function is;
+
+```r
+haversine <- function(lat1, lon1, lat2, lon2) {
+  R <- 6371000  # Radius of the Earth in meters
+  lat1_rad <- lat1 * pi / 180
+  lon1_rad <- lon1 * pi / 180
+  lat2_rad <- lat2 * pi / 180
+  lon2_rad <- lon2 * pi / 180
+  
+  dlat <- lat2_rad - lat1_rad
+  d
+```
+
+To do that, we use the `distart`;
 
 
 ``` r
