@@ -1,8 +1,8 @@
 ---
 title: "User Guide **SARtisanal** package"
 subtitle: "Methodology used to calculate of Swept Area Ratio (SAR) in artisanal fisheries context"
-author: "Mardones. M., Delgado, M., ..."
-date:  "21 November, 2024"
+author: "Mardones. M., Delgado, M., Magro, A."
+date:  "14 May, 2025"
 bibliography: SARtisanal.bib
 csl: apa.csl
 link-citations: yes
