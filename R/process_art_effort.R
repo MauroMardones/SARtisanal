@@ -54,9 +54,9 @@ process_art_effort <- function(data, lon_col = "N_LONGITUD", lat_col = "N_LATITU
   }
 
   avg_SA_per_cell <- st_join(data_sf, grid) %>%
-    group_by(.data$cellid) %>%
+    group_by(cellid) %>%
     summarize(promedio_SA = mean(.data[[sa_col]], na.rm = TRUE), .groups = "drop") %>%
-    distinct(.data$cellid, .keep_all = TRUE)  %>%
+    distinct(cellid, .keep_all = TRUE)  %>%
     st_as_sf()
 
   # 5. Check for missing data after join
@@ -67,9 +67,9 @@ process_art_effort <- function(data, lon_col = "N_LONGITUD", lat_col = "N_LATITU
   # 6. Join grid geometry with average SA data, adding cell area and SAR levels
   grid <- grid %>%
     mutate(cellid = as.integer(cellid),
-           area_celda = as.numeric(st_area(.data$geometry)))  %>%
+           area_celda = as.numeric(st_area(.)))  %>%
     st_join(avg_SA_per_cell) %>%
-    mutate(SAR = (.data$promedio_SA / .data$area_celda) * 100)
+    mutate(SAR = (promedio_SA / area_celda) * 100)
 
   # 7. Return the processed spatial data frame
   return(grid)

@@ -51,9 +51,9 @@ count_art_trawl <- function(data, lon_col = "N_LONGITUD", lat_col = "N_LATITUD",
 
   # 5. Count the number of vessel passages per cell
   passages_per_cell <- st_join(data_sf, grid) %>%
-    group_by(.data$cellid) %>%
+    group_by(cellid) %>%
     summarize(count_passages = n(), .groups = "drop") %>%
-    distinct(.data$cellid, .keep_all = TRUE) %>%
+    distinct(cellid, .keep_all = TRUE) %>%
     st_as_sf()
 
   # 6. Check for missing data after join
@@ -63,7 +63,7 @@ count_art_trawl <- function(data, lon_col = "N_LONGITUD", lat_col = "N_LATITUD",
 
   # 7. Join grid geometry with passages count
   grid <- grid %>%
-    mutate(cellid = as.integer(.data$cellid)) %>%
+    mutate(cellid = as.integer(cellid)) %>%
     st_join(passages_per_cell)
 
   # 8. Return the processed spatial data frame with passage counts
